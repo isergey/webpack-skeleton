@@ -1,15 +1,10 @@
-var React = require('react');
-var $ = require('jquery');
+'use strict';
+import React from 'react';
+import CommentBox from './components/comment-box/CommentBox';
+import summ from './commons-use';
 
-var CommentBox = React.createClass({
-  render: function () {
-    return (
-      <div className="commentBox">
-        Hello, world! I am a CommentBox.
-      </div>
-    );
-  }
-});
+console.log(summ);
+
 
 React.render(
   <CommentBox />,

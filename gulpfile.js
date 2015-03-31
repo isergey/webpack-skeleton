@@ -1,5 +1,7 @@
+'use strict';
 var argv = require('yargs').argv;
 var autoprefixer = require('gulp-autoprefixer');
+var browserSync = require('browser-sync');
 var del = require('del');
 var gulp = require('gulp');
 var gnewer = require('gulp-newer');
@@ -12,9 +14,7 @@ var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var webpack = require('webpack');
 
-//var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
-
-RELEASE_MODE = argv.release || false;
+var RELEASE_MODE = argv.release || false;
 
 var paths = Object.create({
   src: path.join(__dirname, 'src'),
@@ -28,7 +28,7 @@ var paths = Object.create({
 });
 
 
-gulp.task('webpack', [], function (callback) {
+gulp.task('webpack', [], function () {
   var srcScripts = path.join(paths.src, 'scripts');
   var distScripts = path.join(paths.dist, 'scripts');
   var watch = true;
@@ -53,34 +53,44 @@ gulp.task('webpack', [], function (callback) {
   }
 
   webpack({
-    watch: watch,
-    devtool: 'source-map',
-    entry: {
-      index: path.join(srcScripts, 'index.js')
-      //index2: path.join(srcScripts, 'index2.js')
+      watch: watch,
+      devtool: 'source-map',
+      entry: {
+        index: path.join(srcScripts, 'index.js')
+        //index2: path.join(srcScripts, 'index2.js')
+      },
+      output: {
+        path: path.join(distScripts),
+        filename: '[name].js',
+        sourceMapFilename: '[file].map'
+      },
+      plugins: plugins,
+      module: {
+        loaders: [
+          {
+            test: /\.ts$/,
+            loader: 'typescript-loader?typescriptCompiler=jsx-typescript'
+          },
+          {
+            test: /\.jsx?$/,
+            exclude: /node_modules/,
+            loaders: ['babel-loader?experimental']
+          }
+        ]
+      },
+      resolve: {
+        extensions: ['', '.ts', '.js', '.jsx']
+      }
     },
-    output: {
-      path: path.join(distScripts),
-      filename: '[name].js',
-      sourceMapFilename: '[file].map'
-    },
-    plugins: plugins,
-    module: {
-      loaders: [
-        {
-          test: /\.jsx?$/,
-          exclude: /node_modules/,
-          loaders: ['react-hot-loader', 'babel-loader']
-        }
-      ]
-    }
-  }, function (err, stats) {
-    if (err) throw new gutil.PluginError('webpack', err);
-    gutil.log('[webpack]', stats.toString({
-      // output options
-    }));
-    //callback();
-  });
+    function (err, stats) {
+      if (err) {
+        throw new gutil.PluginError('webpack', err);
+      }
+      browserSync.reload();
+      gutil.log('[webpack]', stats.toString({
+        chunks: false
+      }));
+    });
 
 });
 
@@ -114,12 +124,10 @@ gulp.task('images', function () {
     .pipe(gulp.dest(imageDest));
 });
 
-
 gulp.task('watch', function () {
-  gulp.watch(paths.watch.html, ['html']);
-  //gulp.watch(paths.watch.scripts, ['webpack']);
-  gulp.watch(paths.watch.sass, ['sass']);
-  gulp.watch(paths.watch.images, ['images']);
+  gulp.watch(paths.watch.html, ['html']).on('change', browserSync.reload);
+  gulp.watch(paths.watch.sass, ['sass']).on('change', browserSync.reload);
+  gulp.watch(paths.watch.images, ['images']).on('change', browserSync.reload);
 });
 
 
@@ -127,4 +135,21 @@ gulp.task('clean', function (cb) {
   del([paths.dist], cb);
 });
 
-gulp.task('default', ['webpack', 'images', 'sass', 'html', 'watch']);
+
+gulp.task('browser-sync', function () {
+  browserSync({
+    server: {
+      baseDir: paths.dist
+    }
+  });
+});
+
+var gulpDefaultTasks = ['webpack', 'images', 'sass', 'html'];
+
+if (!RELEASE_MODE) {
+  ['watch', 'browser-sync'].forEach(function (item) {
+    gulpDefaultTasks.push(item);
+  });
+}
+
+gulp.task('default', gulpDefaultTasks);
