@@ -22,6 +22,7 @@ var paths = Object.create({
   watch: {
     scripts: path.join(__dirname, 'src', 'scripts/**/*'),
     html: path.join(__dirname, 'src', '**/*.html'),
+    data: path.join(__dirname, 'src', 'data/**/*'),
     images: path.join(__dirname, 'src', 'images/**/*'),
     sass: path.join(__dirname, 'src', 'styles/**/*.scss')
   }
@@ -53,6 +54,9 @@ gulp.task('webpack', [], function () {
   }
 
   webpack({
+      node: {
+        fs: 'empty'
+      },
       watch: watch,
       devtool: 'source-map',
       entry: {
@@ -113,7 +117,7 @@ gulp.task('sass', function () {
 gulp.task('html', function () {
   gulp.src(paths.watch.html)
     .pipe(plumber())
-    .pipe(gulp.dest(path.join(paths.dist)));
+    .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('images', function () {
@@ -124,8 +128,16 @@ gulp.task('images', function () {
     .pipe(gulp.dest(imageDest));
 });
 
+gulp.task('data', function () {
+  gulp.src(paths.watch.data)
+    .pipe(plumber())
+    .pipe(gulp.dest(path.join(paths.dist, 'data')));
+});
+
+
 gulp.task('watch', function () {
   gulp.watch(paths.watch.html, ['html']).on('change', browserSync.reload);
+  gulp.watch(paths.watch.html, ['data']).on('change', browserSync.reload);
   gulp.watch(paths.watch.sass, ['sass']).on('change', browserSync.reload);
   gulp.watch(paths.watch.images, ['images']).on('change', browserSync.reload);
 });
@@ -144,7 +156,7 @@ gulp.task('browser-sync', function () {
   });
 });
 
-var gulpDefaultTasks = ['webpack', 'images', 'sass', 'html'];
+var gulpDefaultTasks = ['webpack', 'images', 'sass', 'html', 'data'];
 
 if (!RELEASE_MODE) {
   ['watch', 'browser-sync'].forEach(function (item) {
