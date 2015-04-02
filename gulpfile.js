@@ -150,6 +150,7 @@ gulp.task('clean', function (cb) {
 
 gulp.task('browser-sync', function () {
   browserSync({
+    open: false,
     server: {
       baseDir: paths.dist
     }

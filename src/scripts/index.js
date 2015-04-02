@@ -1,6 +1,8 @@
 'use strict';
 import React from 'react';
 import CommentBox from './components/comment-box/CommentBox';
+import YandexMaps from './components/map/YandexMaps';
+
 
 class Events {
   constructor () {
@@ -31,8 +33,12 @@ events.trigger('click1', {a: 1});
 
 
 
+
 React.render(
-  <CommentBox />,
+  <div>
+    <CommentBox />
+    <YandexMaps />
+  </div>,
   document.getElementById('app')
 );
 
