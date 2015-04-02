@@ -3,7 +3,7 @@ import React from 'react';
 import marked from 'marked';
 
 
-export default React.createClass({
+export default class Comment extends React.Component {
   render() {
     return (
       <div className="comment">
@@ -12,4 +12,4 @@ export default React.createClass({
       </div>
     );
   }
-})
+}

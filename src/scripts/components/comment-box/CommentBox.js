@@ -23,7 +23,7 @@ export default React.createClass({
     this.loadCommentsFromServer();
   },
   onCommentSubmit(comment) {
-    console.log(comment);
+    console.log(comm);
     var comments = this.state.comments;
     comments.push(comment);
     this.setState({

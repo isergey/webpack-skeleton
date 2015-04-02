@@ -2,7 +2,7 @@
 import React from 'react';
 import CommentBox from './components/comment-box/CommentBox';
 import YandexMaps from './components/map/YandexMaps';
-
+import FieldSet from './components/filter/FieldSet'
 
 class Events {
   constructor () {
@@ -37,6 +37,7 @@ events.trigger('click1', {a: 1});
 React.render(
   <div>
     <CommentBox />
+    <FieldSet />
     <YandexMaps />
   </div>,
   document.getElementById('app')
