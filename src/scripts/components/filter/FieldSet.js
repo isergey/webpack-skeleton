@@ -2,15 +2,14 @@
 import React from 'react';
 import marked from 'marked';
 import _ from 'lodash';
-
-import RadioSelectField from './RadioSelectField';
+import Field from './Field.js';
 
 export default React.createClass( {
   render() {
     return (
-      <div class="form-fieldset">
-        Field set1
-        <RadioSelectField/>
+      <div className="filter-fieldset">
+        <Field title='Услуга'/>
+        <Field/>
       </div>
     );
   }

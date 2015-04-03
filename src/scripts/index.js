@@ -36,7 +36,6 @@ events.trigger('click1', {a: 1});
 
 React.render(
   <div>
-    <CommentBox />
     <FieldSet />
     <YandexMaps />
   </div>,

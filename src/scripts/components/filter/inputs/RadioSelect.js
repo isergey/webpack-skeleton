@@ -5,10 +5,12 @@ import Radio from './Radio';
 export default React.createClass({
   render() {
     return (
-      <div class="form-radio-select-field">
-        <Radio/>
-        <Radio/>
-        <Radio/>
+      <div className="filter-radio-select">
+        <Radio onChange={()=> {
+          console.log('123');
+        }}/>
+        <Radio />
+        <Radio />
       </div>
     );
   }
