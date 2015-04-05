@@ -33,11 +33,20 @@ events.trigger('click1', {a: 1});
 
 
 
-
 React.render(
-  <div>
-    <FieldSet />
-    <YandexMaps />
+  <div className='objects-search clearfix'>
+    <div className='objects-search__map'>
+      <YandexMaps/>
+    </div>
+    <div className='objects-search__filter'>
+      <FieldSet title='Основные' fields={[1, 2]} childFieldSets={[
+        {
+          title: 'Расширенные характеристики',
+          fields: [1, 2, 3]
+        }
+      ]} />
+    </div>
+
   </div>,
   document.getElementById('app')
 );

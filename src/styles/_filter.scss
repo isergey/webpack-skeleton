@@ -1,6 +1,36 @@
+.filter-fieldset__title {
+  border-bottom: 1px dotted;
+  cursor: pointer;
+  font-weight: bold;
+  user-select: none;
+}
+
+.filter-fieldset__fields_closed {
+  display: none;
+}
+
+.filter-fieldset__child-closed {
+  display: none;
+}
+.filter-field__expander {
+
+}
+
 .filter-field__expander_closed {
   background: red;
 }
+
+.filter-field__title {
+  cursor: pointer;
+  transition: 1s;
+  border-bottom: 1px dotted;
+  user-select: none;
+}
+
+.filter-field__title:hover {
+  color: red;
+}
+
 
 .filter-field__input_closed {
   display: none;

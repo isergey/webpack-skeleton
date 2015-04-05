@@ -37,7 +37,6 @@ gulp.task('webpack', [], function () {
   var plugins = [
     new webpack.optimize.CommonsChunkPlugin('commons.js'),
     new webpack.NoErrorsPlugin()
-    //new webpack.HotModuleReplacementPlugin(),
   ];
 
   if (RELEASE_MODE) {

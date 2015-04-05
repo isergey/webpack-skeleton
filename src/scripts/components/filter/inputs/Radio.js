@@ -1,7 +1,6 @@
 'use strict';
 import React from 'react';
-import marked from 'marked';
-import _ from 'lodash';
+
 
 export default React.createClass({
   getDefaultProps() {
@@ -9,9 +8,10 @@ export default React.createClass({
       label: '',
       disabled: false,
       checked: false,
-      name: '1',
+      name: '',
       value: '',
-      onChange: () => { }
+      onChange: () => {
+      }
     };
   },
   getInitialState() {
@@ -28,14 +28,16 @@ export default React.createClass({
     });
   },
   render() {
-    var input = <input
-      type="radio"
-      name={this.props.name}
-      value={this.props.value}
-      disabled={this.state.disabled}
-      defaultChecked={this.state.checked}
-      onChange={this.handleChange}
-    />;
+    var input =
+      <input
+        className='filter-radio-input'
+        type='radio'
+        name={this.props.name}
+        value={this.props.value}
+        disabled={this.state.disabled}
+        defaultChecked={this.state.checked}
+        onChange={this.handleChange}
+        />;
 
     if (!this.props.label) {
       return (
@@ -43,7 +45,7 @@ export default React.createClass({
       );
     }
     return (
-      <label>{input} { this.props.label }1</label>
+      <label className='filter-radio-label'>{input} { this.props.label }</label>
     );
   }
 });
