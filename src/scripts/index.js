@@ -1,8 +1,10 @@
 'use strict';
 import React from 'react';
-import CommentBox from './components/comment-box/CommentBox';
+
+
 import YandexMaps from './components/map/YandexMaps';
 import FieldSet from './components/filter/FieldSet'
+
 
 class Events {
   constructor () {
@@ -31,7 +33,7 @@ events.on('click', function (data) {
 events.trigger('click', {a: 1});
 events.trigger('click1', {a: 1});
 
-var filterSchema  = {
+var filterSchema = {
   title: 'Основыне характеристики',
   fields: [
     {
@@ -56,6 +58,7 @@ var filterSchema  = {
   children: [
     {
       title: 'Расширенные характеристики',
+      expanded: false,
       fields: [
         {
           name: 'animals',
@@ -79,6 +82,7 @@ var filterSchema  = {
       children: [
         {
           title: 'Доп характеристики',
+          expanded: false,
           fields: [
             {
               name: 'buildType',
@@ -106,7 +110,6 @@ var filterSchema  = {
   ]
 };
 
-
 React.render(
   <div className='objects-search clearfix'>
     <div className='objects-search__map'>
@@ -118,4 +121,3 @@ React.render(
   </div>,
   document.getElementById('app')
 );
-

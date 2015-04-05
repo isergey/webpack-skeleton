@@ -1,3 +1,11 @@
+.filter-group_hidden {
+  display: none;
+}
+
+.filter-group__fields_hidden {
+  display: none;
+}
+
 .filter-fieldset__title {
   border-bottom: 1px dotted;
   cursor: pointer;
@@ -9,7 +17,7 @@
   display: none;
 }
 
-.filter-fieldset__child-closed {
+.filter-fieldset__child_closed {
   display: none;
 }
 .filter-field__expander {
@@ -35,3 +43,4 @@
 .filter-field__input_closed {
   display: none;
 }
+

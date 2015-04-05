@@ -1,5 +1,6 @@
 'use strict';
-import React from 'react';
+import React from 'react/addons';
+import _ from 'lodash';
 import classnames from 'classnames';
 
 import Field from './Field.js';
@@ -18,17 +19,25 @@ var FieldSet = React.createClass({
   },
   getInitialState() {
     return {
-      expanded: this.props.expanded
+      expanded: this.props.expanded,
+      childFieldSets: this.props.childFieldSets
     };
   },
   expanderClickHandle() {
-    if (this.props.expandable) {
-      this.setState({expanded: !this.state.expanded});
-    }
+    var childFieldSets = _.cloneDeep(this.state.childFieldSets).map((child) => {
+      child.expanded = false;
+      return child;
+    });
+
+    this.setState({
+      expanded: !this.state.expanded,
+      childFieldSets: childFieldSets
+    });
   },
   render() {
+
     var expanderClasses = classnames('filter-fieldset__fields', {'filter-fieldset__fields_closed': !this.state.expanded});
-    var childFieldSetClasses = classnames('filter-fieldset__child', {'filter-fieldset__child-closed': !this.state.expanded});
+    var childFieldSetClasses = classnames('filter-fieldset__child', {'filter-fieldset__child_closed': !this.state.expanded});
 
     var headerComponent = this.props.title ?
       <div className='filter-fieldset__header' onClick={this.expanderClickHandle}>
@@ -48,9 +57,16 @@ var FieldSet = React.createClass({
       return null;
     });
 
-    var childFieldSetComponents = this.props.childFieldSets.map((fieldSet, key)=> {
+    var childFieldSetComponents = this.state.childFieldSets.map((fieldSet, key)=> {
       return (
-        <FieldSet key={key} title={fieldSet.title} fields={fieldSet.fields} childFieldSets={fieldSet.children} />
+        <FieldSet
+          key={key}
+          title={fieldSet.title}
+          expandable={fieldSet.expandable}
+          expanded={fieldSet.expanded}
+          fields={fieldSet.fields}
+          childFieldSets={fieldSet.children}
+          />
       );
     });
 

@@ -72,6 +72,7 @@ gulp.task('webpack', [], function () {
         loaders: [
           {
             test: /\.ts$/,
+            exclude: /node_modules/,
             loader: 'typescript-loader?typescriptCompiler=jsx-typescript'
           },
           {
