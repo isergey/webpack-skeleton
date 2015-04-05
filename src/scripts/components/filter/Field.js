@@ -7,12 +7,16 @@ import RadioSelectField from './inputs/RadioSelect';
 
 
 export default React.createClass({
+  propTypes: {
+    title: React.PropTypes.string,
+    expandable:  React.PropTypes.bool,
+    expanded:  React.PropTypes.bool
+  },
   getDefaultProps() {
     return {
       expandable: true,
       expanded: true,
-      title: '',
-      input: {}
+      title: ''
     };
   },
   getInitialState() {

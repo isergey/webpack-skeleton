@@ -37,16 +37,20 @@ var FieldSet = React.createClass({
       : null;
 
     var fieldComponents = this.props.fields.map((field, key) => {
-      return (
-        <Field key={key} title='Услуга'>
-          <RadioSelect name='serviceType' initial={'1'} choices={[ ['1', 'Аренда'], ['2', 'Продажа'] ]}/>
-        </Field>
-      );
+      if (field.input === 'RadioSelect') {
+        return (
+          <Field key={key} title={field.title}>
+            <RadioSelect name={field.name} initial={field.initial} choices={field.choices}/>
+          </Field>
+        );
+      }
+      console.warn(`Input type ${field.input} not found`);
+      return null;
     });
 
     var childFieldSetComponents = this.props.childFieldSets.map((fieldSet, key)=> {
       return (
-        <FieldSet key={key} fields={fieldSet.fields} title={fieldSet.title}/>
+        <FieldSet key={key} title={fieldSet.title} fields={fieldSet.fields} childFieldSets={fieldSet.children} />
       );
     });
 

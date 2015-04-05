@@ -31,6 +31,80 @@ events.on('click', function (data) {
 events.trigger('click', {a: 1});
 events.trigger('click1', {a: 1});
 
+var filterSchema  = {
+  title: 'Основыне характеристики',
+  fields: [
+    {
+      name: 'serviceType',
+      title: 'Услуга',
+      input: 'RadioSelect',
+      choices: [
+        ['1', 'Аренда'],
+        ['2', 'Продажа']
+      ]
+    },
+    {
+      name: 'objectType',
+      input: 'RadioSelect',
+      title: 'Тип объекта',
+      choices: [
+        ['1', 'Квартира'],
+        ['2', 'Комната']
+      ]
+    }
+  ],
+  children: [
+    {
+      title: 'Расширенные характеристики',
+      fields: [
+        {
+          name: 'animals',
+          title: 'С животными',
+          input: 'RadioSelect',
+          choices: [
+            ['1', 'Можно'],
+            ['2', 'Нельзя']
+          ]
+        },
+        {
+          name: 'toulet',
+          input: 'RadioSelect',
+          title: 'Туалет',
+          choices: [
+            ['1', 'Раздельный'],
+            ['2', 'Совмещенный']
+          ]
+        }
+      ],
+      children: [
+        {
+          title: 'Доп характеристики',
+          fields: [
+            {
+              name: 'buildType',
+              title: 'Тип здания',
+              input: 'RadioSelect',
+              choices: [
+                ['1', 'Кирпичный'],
+                ['2', 'Монолитный']
+              ]
+            },
+            {
+              name: 'newType',
+              input: 'RadioSelect',
+              title: 'Новойстройка',
+              choices: [
+                ['1', 'Не имеет значения'],
+                ['2', 'Да'],
+                ['3', 'Нет']
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
 
 
 React.render(
@@ -39,14 +113,8 @@ React.render(
       <YandexMaps/>
     </div>
     <div className='objects-search__filter'>
-      <FieldSet title='Основные' fields={[1, 2]} childFieldSets={[
-        {
-          title: 'Расширенные характеристики',
-          fields: [1, 2, 3]
-        }
-      ]} />
+      <FieldSet title={filterSchema.title} fields={filterSchema.fields} childFieldSets={filterSchema.children} />
     </div>
-
   </div>,
   document.getElementById('app')
 );
