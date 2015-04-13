@@ -3,8 +3,8 @@ import React from 'react';
 
 
 import YandexMaps from './components/map/YandexMaps';
-import FieldSet from './components/filter/FieldSet'
-
+//import FieldSet from './components/filter/FieldSet'
+import Group from './components/filter/Group.js';
 
 class Events {
   constructor () {
@@ -34,11 +34,12 @@ events.trigger('click', {a: 1});
 events.trigger('click1', {a: 1});
 
 var filterSchema = {
-  title: 'Основыне характеристики',
+  //title: 'Основыне характеристики',
   fields: [
     {
       name: 'serviceType',
       title: 'Услуга',
+      expandable: false,
       input: 'RadioSelect',
       choices: [
         ['1', 'Аренда'],
@@ -49,6 +50,7 @@ var filterSchema = {
       name: 'objectType',
       input: 'RadioSelect',
       title: 'Тип объекта',
+      expandable: false,
       choices: [
         ['1', 'Квартира'],
         ['2', 'Комната']
@@ -116,7 +118,7 @@ React.render(
       <YandexMaps/>
     </div>
     <div className='objects-search__filter'>
-      <FieldSet title={filterSchema.title} fields={filterSchema.fields} childFieldSets={filterSchema.children} />
+      <Group expanded={true} title={filterSchema.title} fields={filterSchema.fields} children={filterSchema.children}/>
     </div>
   </div>,
   document.getElementById('app')

@@ -8,7 +8,7 @@ export default React.createClass({
       name: '1',
       initial: null,
       choices: []
-    }
+    };
   },
   render() {
     var _this = this;
@@ -23,7 +23,7 @@ export default React.createClass({
             value={choiceValue}
             checked={ _this.props.initial === choiceValue }
             />
-        </div>)
+        </div>);
     });
     return (
       <div className="filter-radio-select">

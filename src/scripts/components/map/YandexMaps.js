@@ -7,9 +7,9 @@ export default React.createClass({
     const _this = this;
     this.map = null;
 
-    DG.then(function () {
-      _this.map = DG.map(selfNode, {
-        center: [59.936081,30.317960],
+    window.DG.then(function () {
+      _this.map = window.DG.map(selfNode, {
+        center: [59.936081, 30.317960],
         zoom: 13
       });
 
@@ -18,7 +18,7 @@ export default React.createClass({
   },
   handleClick() {
     console.log('map clicked');
-    DG.marker([59.936081,30.317960]).addTo(this.map).bindPopup('Вы кликнули по мне!');
+    window.DG.marker([59.936081, 30.317960]).addTo(this.map).bindPopup('Вы кликнули по мне!');
     //this.map.geoObjects.add(
     //  new window.ymaps.Placemark([56.76, 37.64], { content: 'Москва!', balloonContent: 'Столица России' })
     //);

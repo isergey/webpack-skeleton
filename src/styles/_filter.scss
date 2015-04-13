@@ -1,46 +1,62 @@
-.filter-group_hidden {
-  display: none;
-}
-
-.filter-group__fields_hidden {
-  display: none;
-}
-
-.filter-fieldset__title {
-  border-bottom: 1px dotted;
-  cursor: pointer;
+.filter-group__title {
   font-weight: bold;
-  user-select: none;
+  border-bottom: dashed 1px;
+  cursor: pointer;
 }
 
-.filter-fieldset__fields_closed {
+.filter-group__title:hover {
+  color:#d90047;
+}
+
+.filter-group__fields {
+  margin: 0 0 0 20px;
+  padding: 0;
+}
+
+.filter-group__children {
+  margin: 0;
+  padding: 0;
+}
+
+.filter-group__children-item {
+  margin: 0;
+}
+
+.filter-group__content_closed {
   display: none;
 }
 
-.filter-fieldset__child_closed {
-  display: none;
-}
-.filter-field__expander {
-
+.filter-group__expander:after {
+  content: "▼ ";
 }
 
-.filter-field__expander_closed {
-  background: red;
+.filter-group__expander_closed:after {
+  content: "► ";
+}
+
+.filter-field {
+  margin: 5px 0 5px 0;
+}
+
+.filter-field__header {
+  margin: 0 0 5px 0;
 }
 
 .filter-field__title {
   cursor: pointer;
-  transition: 1s;
-  border-bottom: 1px dotted;
-  user-select: none;
+  border-bottom: dashed 1px;
+
 }
 
-.filter-field__title:hover {
-  color: red;
+.filter-field__expander {
+  content: "► ";
 }
-
-
+.filter-field__expander:after {
+  content: "▼ ";
+}
+.filter-field__input {
+  margin: 0 0 0 20px;
+}
 .filter-field__input_closed {
   display: none;
 }
-
