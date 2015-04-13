@@ -7,8 +7,12 @@ export default React.createClass({
     return {
       name: '1',
       initial: null,
-      choices: []
+      choices: [],
+      onChange: () => {}
     };
+  },
+  onChange(data) {
+    this.props.onChange(data);
   },
   render() {
     var _this = this;
@@ -18,6 +22,7 @@ export default React.createClass({
       return (
         <div key={key}>
           <Radio
+            onChange={this.onChange}
             name={this.props.name}
             label={choiceLabel}
             value={choiceValue}

@@ -7,13 +7,14 @@ import YandexMaps from './components/map/YandexMaps';
 import Group from './components/filter/Group.js';
 
 class Events {
-  constructor () {
+  constructor() {
     this.events = {};
   }
 
   on(eventId, callback) {
     this.events[eventId] = callback;
   }
+
   trigger(eventId, data) {
     var callback = this.events[eventId];
     if (callback instanceof Function) {
@@ -44,7 +45,8 @@ var filterSchema = {
       choices: [
         ['1', 'Аренда'],
         ['2', 'Продажа']
-      ]
+      ],
+      initial: '1'
     },
     {
       name: 'objectType',
@@ -55,6 +57,19 @@ var filterSchema = {
         ['1', 'Квартира'],
         ['2', 'Комната']
       ]
+    },
+    {
+      name: 'period',
+      input: 'RadioSelect',
+      title: 'Период',
+      expandable: false,
+      choices: [
+        ['1', 'Длительно'],
+        ['2', 'Посуточно']
+      ],
+      showOn: {
+        'serviceType': ['1']
+      }
     }
   ],
   children: [
@@ -112,14 +127,52 @@ var filterSchema = {
   ]
 };
 
+var App = React.createClass({
+  getInitialFilterValues() {
+    var values = {};
+    filterSchema.fields.forEach((field) => {
+      if (field.initial !== undefined) {
+        values[field.name] = field.initial;
+      }
+    });
+    return values;
+  },
+  getInitialState() {
+    return {
+      filterValues: this.getInitialFilterValues()
+    };
+  },
+  onFilterChange(data) {
+    var filterValues = this.state.filterValues;
+    filterValues[data.name] = data.value;
+    this.setState({
+      filterValues: filterValues
+    });
+    //console.log('onFilterChange1', data);
+    //console.log('filterValues', filterValues);
+  },
+  render() {
+    return (
+      <div className='objects-search clearfix'>
+        <div className='objects-search__map'>
+          <YandexMaps/>
+        </div>
+        <div className='objects-search__filter'>
+          <Group
+            onChange={this.onFilterChange}
+            filterValues={this.state.filterValues}
+            expanded={true}
+            expandable={filterSchema.expandable}
+            title={filterSchema.title}
+            fields={filterSchema.fields}
+            children={filterSchema.children}/>
+        </div>
+      </div>
+    );
+  }
+});
+
 React.render(
-  <div className='objects-search clearfix'>
-    <div className='objects-search__map'>
-      <YandexMaps/>
-    </div>
-    <div className='objects-search__filter'>
-      <Group expanded={true} title={filterSchema.title} fields={filterSchema.fields} children={filterSchema.children}/>
-    </div>
-  </div>,
+  <App />,
   document.getElementById('app')
 );

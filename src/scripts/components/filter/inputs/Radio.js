@@ -23,8 +23,7 @@ export default React.createClass({
   handleChange(event) {
     this.props.onChange({
       name: event.target.name,
-      value: event.target.value,
-      checked: event.target.checked
+      value: event.target.value
     });
   },
   render() {

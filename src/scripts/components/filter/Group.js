@@ -5,6 +5,27 @@ import classnames from 'classnames';
 import Field from './Field.js';
 import RadioSelect from './inputs/RadioSelect';
 
+var checkForShow = (field, filterValues) => {
+  var showField = true;
+  var showOn = field.showOn;
+  if (showOn !== undefined) {
+    showField = false;
+    for (let key in showOn) {
+      let filterValuesForCurrentKey = filterValues[key];
+      if (filterValuesForCurrentKey === undefined) {
+        continue;
+      }
+      let showOnValues = showOn[key];
+      for (let index in showOnValues) {
+        if (filterValuesForCurrentKey.indexOf(showOnValues[index]) > -1) {
+          showField = true;
+        }
+      }
+    }
+  }
+  return showField;
+};
+
 
 var Group = React.createClass({
   getDefaultProps: function () {
@@ -13,7 +34,9 @@ var Group = React.createClass({
       fields: [],
       children: [],
       needClose: false,
-      expanded: false
+      expanded: false,
+      filterValues: {},
+      onChange: () => {}
     };
   },
   getInitialState: function () {
@@ -33,14 +56,22 @@ var Group = React.createClass({
       expanded: !this.state.expanded
     });
   },
+  onChange(data) {
+    this.props.onChange(data);
+  },
   render: function () {
     var self = this;
     var expanded = this.state.expanded;
 
     var fields = this.props.fields.map((field, i) => {
+      var showField = checkForShow(field, self.props.filterValues);
       return (
-        <Field key={i} name={field.name} title={field.title} expandable={field.expandable}>
-          <RadioSelect name={field.name} choices={field.choices} />
+        <Field show={showField} key={i} name={field.name} title={field.title} expandable={field.expandable}>
+          <RadioSelect
+            onChange={self.props.onChange}
+            name={field.name}
+            choices={field.choices}
+            initial={field.initial}/>
         </Field>
       );
     });
@@ -48,7 +79,13 @@ var Group = React.createClass({
     var children = this.props.children.map(function (child, i) {
       return (
         <li key={i} className="filter-group__children-item">
-          <Group needClose={!self.state.expanded} title={child.title} fields={child.fields} children={child.children}/>
+          <Group
+            filterValues={self.props.filterValues}
+            onChange={self.onChange}
+            needClose={!self.state.expanded}
+            title={child.title}
+            fields={child.fields}
+            children={child.children}/>
         </li>
       );
     });
