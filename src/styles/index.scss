@@ -3,3 +3,8 @@
 @import "objects-search";
 @import "filter";
 @import "yandex-maps";
+
+// remove 2gis logo
+.leaflet-bottom.leaflet-right {
+	display: none;
+}

@@ -15,7 +15,7 @@ export default React.createClass({
   getDefaultProps() {
     return {
       expandable: true,
-      expanded: true,
+      expanded: false,
       title: ''
     };
   },

@@ -22,11 +22,11 @@ var Group = React.createClass({
     };
   },
   componentWillReceiveProps: function (args) {
-    if (args.needClose) {
+    /*if (args.needClose) {
       this.setState({
         expanded: false
       });
-    }
+    }*/
   },
   titleClickHandle: function () {
     this.setState({
@@ -67,7 +67,6 @@ var Group = React.createClass({
           { fields.length ? <ul className="filter-group__fields">{fields}</ul> : null }
           { children.length ? <ul className="filter-group__children">{children}</ul> : null }
         </div>
-
       </div>
     );
   }

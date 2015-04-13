@@ -45,18 +45,20 @@
 .filter-field__title {
   cursor: pointer;
   border-bottom: dashed 1px;
-
 }
 
-.filter-field__expander {
-  content: "► ";
-}
 .filter-field__expander:after {
   content: "▼ ";
 }
+
+.filter-field__expander_closed:after {
+  content: "► ";
+}
+
 .filter-field__input {
   margin: 0 0 0 20px;
 }
+
 .filter-field__input_closed {
   display: none;
 }
