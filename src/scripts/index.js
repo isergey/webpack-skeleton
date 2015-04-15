@@ -1,12 +1,12 @@
 'use strict';
 import React from 'react';
 
-
+import {initSchema} from './schema/schema';
 import YandexMaps from './components/map/YandexMaps';
 //import FieldSet from './components/filter/FieldSet'
 import Group from './components/filter/Group.js';
 
-class Events {
+/*class Events {
   constructor() {
     this.events = {};
   }
@@ -32,8 +32,9 @@ events.on('click', function (data) {
 });
 
 events.trigger('click', {a: 1});
-events.trigger('click1', {a: 1});
+events.trigger('click1', {a: 1});*/
 
+/*
 var filterSchema = {
   //title: 'Основыне характеристики',
   fields: [
@@ -126,53 +127,65 @@ var filterSchema = {
     }
   ]
 };
+*/
 
-var App = React.createClass({
-  getInitialFilterValues() {
-    var values = {};
-    filterSchema.fields.forEach((field) => {
-      if (field.initial !== undefined) {
-        values[field.name] = field.initial;
-      }
-    });
-    return values;
-  },
-  getInitialState() {
-    return {
-      filterValues: this.getInitialFilterValues()
-    };
-  },
-  onFilterChange(data) {
-    var filterValues = this.state.filterValues;
-    filterValues[data.name] = data.value;
-    this.setState({
-      filterValues: filterValues
-    });
-    //console.log('onFilterChange1', data);
-    //console.log('filterValues', filterValues);
-  },
-  render() {
-    return (
-      <div className='objects-search clearfix'>
-        <div className='objects-search__map'>
-          <YandexMaps/>
+initSchema().then((schema) => {
+  //console.log('schema getCharacteristics', schema.getCharacteristics());
+  //console.log('schema getCharacteristics', schema.getGroups());
+  //console.log('schema getFilter', schema.getFilter().buildFilterSchema());
+  var filterSchema = schema.getFilter().buildFilterSchema();
+  var App = React.createClass({
+    getInitialFilterValues() {
+      var values = {};
+      filterSchema.fields.forEach((field) => {
+        if (field.initial !== undefined) {
+          values[field.name] = field.initial;
+        }
+      });
+      return values;
+    },
+    getInitialState() {
+      return {
+        filterValues: this.getInitialFilterValues()
+      };
+    },
+    onFilterChange(data) {
+      var filterValues = this.state.filterValues;
+      filterValues[data.name] = data.value;
+      this.setState({
+        filterValues: filterValues
+      });
+      //console.log('onFilterChange1', data);
+      //console.log('filterValues', filterValues);
+    },
+    render() {
+      return (
+        <div className='objects-search clearfix'>
+          <div className='objects-search__map'>
+            <YandexMaps/>
+          </div>
+          <div className='objects-search__filter'>
+            <Group
+              onChange={this.onFilterChange}
+              filterValues={this.state.filterValues}
+              expanded={true}
+              expandable={filterSchema.expandable}
+              title={filterSchema.title}
+              fields={filterSchema.fields}
+              children={filterSchema.children}/>
+          </div>
         </div>
-        <div className='objects-search__filter'>
-          <Group
-            onChange={this.onFilterChange}
-            filterValues={this.state.filterValues}
-            expanded={true}
-            expandable={filterSchema.expandable}
-            title={filterSchema.title}
-            fields={filterSchema.fields}
-            children={filterSchema.children}/>
-        </div>
-      </div>
-    );
-  }
+      );
+    }
+  });
+
+  React.render(
+    <App />,
+    document.getElementById('app')
+  );
+
+}).catch((error) => {
+  console.log('schema not loaded', error);
+  console.error(error.stack);
 });
 
-React.render(
-  <App />,
-  document.getElementById('app')
-);

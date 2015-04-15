@@ -16,8 +16,8 @@ var checkForShow = (field, filterValues) => {
         continue;
       }
       let showOnValues = showOn[key];
-      for (let index in showOnValues) {
-        if (filterValuesForCurrentKey.indexOf(showOnValues[index]) > -1) {
+      for (let showOnValue of showOnValues) {
+        if (filterValuesForCurrentKey.indexOf(showOnValue) > -1) {
           showField = true;
         }
       }
@@ -45,11 +45,11 @@ var Group = React.createClass({
     };
   },
   componentWillReceiveProps: function (args) {
-    /*if (args.needClose) {
+    if (args.needClose) {
       this.setState({
         expanded: false
       });
-    }*/
+    }
   },
   titleClickHandle: function () {
     this.setState({
