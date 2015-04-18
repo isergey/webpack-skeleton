@@ -17,8 +17,12 @@ export var buildIndexOnId = (items = []) => {
   return index;
 };
 
-var has = Object.prototype.hasOwnProperty;
-
+/**
+ * Get default value if value is empty
+ * @param val
+ * @param defaultValue
+ * @returns {*|null}
+ */
 export var getDefault = (val, defaultValue = null) => {
   if (val === null || val === undefined) {
     return defaultValue;
@@ -30,7 +34,7 @@ export var getDefault = (val, defaultValue = null) => {
     return defaultValue;
   }
   for (var key in val) {
-    if (has.call(val, key)) {
+    if (Object.prototype.hasOwnProperty.call(val, key)) {
       return val;
     }
   }
