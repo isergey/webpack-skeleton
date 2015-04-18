@@ -34,7 +34,7 @@ events.on('click', function (data) {
 events.trigger('click', {a: 1});
 events.trigger('click1', {a: 1});*/
 
-/*
+
 var filterSchema = {
   //title: 'Основыне характеристики',
   fields: [
@@ -89,12 +89,13 @@ var filterSchema = {
         },
         {
           name: 'toulet',
-          input: 'RadioSelect',
+          input: 'CheckboxSelect',
           title: 'Туалет',
           choices: [
             ['1', 'Раздельный'],
             ['2', 'Совмещенный']
-          ]
+          ],
+          initial: ['1', '2']
         }
       ],
       children: [
@@ -127,13 +128,14 @@ var filterSchema = {
     }
   ]
 };
-*/
+
 
 initSchema().then((schema) => {
+  console.log(schema);
   //console.log('schema getCharacteristics', schema.getCharacteristics());
   //console.log('schema getCharacteristics', schema.getGroups());
   //console.log('schema getFilter', schema.getFilter().buildFilterSchema());
-  var filterSchema = schema.getFilter().buildFilterSchema();
+  //var filterSchema = schema.getFilter().buildFilterSchema();
   var App = React.createClass({
     getInitialFilterValues() {
       var values = {};

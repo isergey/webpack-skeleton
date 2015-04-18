@@ -4,6 +4,7 @@ import classnames from 'classnames';
 
 import Field from './Field.js';
 import RadioSelect from './inputs/RadioSelect';
+import CheckboxSelect from './inputs/CheckboxSelect';
 
 var checkForShow = (field, filterValues) => {
   var showField = true;
@@ -65,13 +66,34 @@ var Group = React.createClass({
 
     var fields = this.props.fields.map((field, i) => {
       var showField = checkForShow(field, self.props.filterValues);
+      var input;
+
+      if (field.input === 'RadioSelect') {
+        input = (<RadioSelect
+          onChange={self.props.onChange}
+          name={field.name}
+          choices={field.choices}
+          initial={field.initial}/>
+        );
+      } else if (field.input === 'CheckboxSelect') {
+        input = (<CheckboxSelect
+          onChange={self.props.onChange}
+          name={field.name}
+          choices={field.choices}
+          initial={field.initial}/>
+        );
+      } else {
+        input = (<RadioSelect
+          onChange={self.props.onChange}
+          name={field.name}
+          choices={field.choices}
+          initial={field.initial}/>
+        );
+      }
+
       return (
         <Field show={showField} key={i} name={field.name} title={field.title} expandable={field.expandable}>
-          <RadioSelect
-            onChange={self.props.onChange}
-            name={field.name}
-            choices={field.choices}
-            initial={field.initial}/>
+          {input}
         </Field>
       );
     });
