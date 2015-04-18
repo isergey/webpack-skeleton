@@ -41,8 +41,8 @@ export default class References {
   static fromJson(referenceList = []) {
     var references = [];
     for (let reference of referenceList) {
-      references.push(reference);
+      references.push(Reference.fromJson(reference));
     }
-    return references;
+    return new References(references);
   }
 }
