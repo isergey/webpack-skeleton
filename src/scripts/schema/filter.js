@@ -4,10 +4,12 @@ export default class Filter {
   /**
    * @param {Characteristics} characteristics
    * @param {Groups} groups
+   * @param {References} references
    */
-  constructor(characteristics, groups) {
+  constructor(characteristics, groups, references) {
     this._characteristics = characteristics;
     this._groups = groups;
+    this._references = references;
   }
 
   /**
@@ -22,7 +24,7 @@ export default class Filter {
     };
 
     for (let group of this._groups.getGroups()) {
-      let node = Filter._buildFilterNode(group, this._characteristics.getCharacteristicsByGroup(group.id)
+      let node = this._buildFilterNode(group, this._characteristics.getCharacteristicsByGroup(group.id)
         .filter(filterByShowInFilter));
       if (!filterSchema) {
         filterSchema = node;
@@ -36,7 +38,7 @@ export default class Filter {
     return filterSchema;
   }
 
-  static _buildFilterNode(group, characteristics = []) {
+  _buildFilterNode(group, characteristics = []) {
     var node = {
       title: group.name,
       fields: [],
@@ -44,17 +46,61 @@ export default class Filter {
     };
 
     for (let characteristic of characteristics) {
+      var input = 'Text';
+      if (!characteristic.filter.input) {
+        if (characteristic.reference) {
+          if (characteristic.filter.multiple) {
+            input = 'CheckboxSelect';
+          } else {
+            input = 'RadioSelect';
+          }
+        }
+      } else {
+        if (characteristic.filter.input === 'range') {
+          input = 'Range';
+        }
+      }
+
       let field = {
         name: characteristic.id,
         title: characteristic.title,
+        type: characteristic.type || 'String',
         expandable: true,
-        input: 'RadioSelect',
-        choices: [
-          ['1', 'Аренда'],
-          ['2', 'Продажа']
-        ],
-        initial: '1'
+        input: input,
+        fromLabel: characteristic.filter.fromLabel,
+        toLabel: characteristic.filter.toLabel,
+        choices: [],
+        initial: characteristic.filter.initial
       };
+
+      if (characteristic.filter.showOn.length > 0) {
+        field.showOn = {};
+        for (let item of characteristic.filter.showOn) {
+          let values = [];
+          for (let value of item.values) {
+            values.push(value.value);
+          }
+          field.showOn[item.id] = values;
+        }
+      }
+
+      //if (characteristic.filter.hideOn.length > 0) {
+      //  field.hideOn = {};
+      //  for (let item of characteristic.filter.hideOn) {
+      //    let values = [];
+      //    for (let value of item.values) {
+      //      values.push(value);
+      //    }
+      //    field.hideOn[item.id] = values;
+      //  }
+      //}
+
+      if (characteristic.reference) {
+        var reference = this._references.getReferenceById(characteristic.reference);
+        for (let referenceItem of reference.getItems()) {
+          field.choices.push([referenceItem.id, referenceItem.value]);
+        }
+      }
       node.fields.push(field);
     }
 

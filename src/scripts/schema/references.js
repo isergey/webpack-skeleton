@@ -19,6 +19,10 @@ class Reference {
     this.items = items;
   }
 
+  getItems() {
+    return this.items;
+  }
+
   static fromJson(data) {
     var items = [];
     for (let item of data.items || []) {

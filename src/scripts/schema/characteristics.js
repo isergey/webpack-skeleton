@@ -46,8 +46,8 @@ class Filter {
     }
 
     return new Filter({
-      showOn: getDefault(showOn, null),
-      hideOn: getDefault(hideOn, null),
+      showOn: showOn,
+      hideOn: hideOn,
       fromLabel: data.fromLabel,
       toLabel: data.toLabel,
       initial: data.initial,

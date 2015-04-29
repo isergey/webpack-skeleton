@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-
+import {getDefault} from './utils';
 import {initSchema} from './schema/schema';
 import YandexMaps from './components/map/YandexMaps';
 //import FieldSet from './components/filter/FieldSet'
@@ -35,7 +35,7 @@ events.trigger('click', {a: 1});
 events.trigger('click1', {a: 1});*/
 
 
-var filterSchema = {
+var filterSchema1 = {
   //title: 'Основыне характеристики',
   fields: [
     {
@@ -135,7 +135,8 @@ initSchema().then((schema) => {
   //console.log('schema getCharacteristics', schema.getCharacteristics());
   //console.log('schema getCharacteristics', schema.getGroups());
   //console.log('schema getFilter', schema.getFilter().buildFilterSchema());
-  //var filterSchema = schema.getFilter().buildFilterSchema();
+  var filterSchema = schema.getFilter().buildFilterSchema();
+  console.log('filterSchema', filterSchema);
   var App = React.createClass({
     getInitialFilterValues() {
       var values = {};
@@ -154,11 +155,19 @@ initSchema().then((schema) => {
     onFilterChange(data) {
       var filterValues = this.state.filterValues;
       filterValues[data.name] = data.value;
+
+      var newValues = {};
+      for (let key in filterValues) {
+        let value = filterValues[key];
+        if (getDefault(value, null) !== null) {
+          newValues[key] = value;
+        }
+      }
       this.setState({
-        filterValues: filterValues
+        filterValues: newValues
       });
       //console.log('onFilterChange1', data);
-      //console.log('filterValues', filterValues);
+      console.log('filterValues', newValues);
     },
     render() {
       return (

@@ -24,6 +24,9 @@ export var buildIndexOnId = (items = []) => {
  * @returns {*|null}
  */
 export var getDefault = (val, defaultValue = null) => {
+  if (val === true) {
+    return val;
+  }
   if (val === null || val === undefined) {
     return defaultValue;
   }

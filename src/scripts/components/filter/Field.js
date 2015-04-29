@@ -3,7 +3,6 @@ import React from 'react';
 import classnames from 'classnames';
 
 
-import RadioSelectField from './inputs/RadioSelect';
 
 
 export default React.createClass({

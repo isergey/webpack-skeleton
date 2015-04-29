@@ -5,6 +5,9 @@ import classnames from 'classnames';
 import Field from './Field.js';
 import RadioSelect from './inputs/RadioSelect';
 import CheckboxSelect from './inputs/CheckboxSelect';
+import Range from './inputs/Range';
+import Text from './inputs/Text';
+
 
 var checkForShow = (field, filterValues) => {
   var showField = true;
@@ -29,7 +32,7 @@ var checkForShow = (field, filterValues) => {
 
 
 var Group = React.createClass({
-  getDefaultProps: function () {
+  getDefaultProps() {
     return {
       title: '',
       fields: [],
@@ -40,19 +43,19 @@ var Group = React.createClass({
       onChange: () => {}
     };
   },
-  getInitialState: function () {
+  getInitialState() {
     return {
       expanded: this.props.expanded
     };
   },
-  componentWillReceiveProps: function (args) {
+  componentWillReceiveProps (args) {
     if (args.needClose) {
       this.setState({
         expanded: false
       });
     }
   },
-  titleClickHandle: function () {
+  titleClickHandle() {
     this.setState({
       expanded: !this.state.expanded
     });
@@ -60,7 +63,7 @@ var Group = React.createClass({
   onChange(data) {
     this.props.onChange(data);
   },
-  render: function () {
+  render() {
     var self = this;
     var expanded = this.state.expanded;
 
@@ -82,11 +85,17 @@ var Group = React.createClass({
           choices={field.choices}
           initial={field.initial}/>
         );
-      } else {
-        input = (<RadioSelect
+      } else if (field.input === 'Range') {
+        input = (<Range
           onChange={self.props.onChange}
           name={field.name}
-          choices={field.choices}
+          fromLabel={field.fromLabel}
+          toLabel={field.toLabel}/>
+        );
+      } else {
+        input = (<Text
+          onChange={self.props.onChange}
+          name={field.name}
           initial={field.initial}/>
         );
       }

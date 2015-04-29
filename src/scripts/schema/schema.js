@@ -15,7 +15,7 @@ class Schema {
     this._characteristics = args.characteristics;
     this._groups = args.groups;
     this._references = args.references;
-    this._filter = new Filter(this._characteristics, this._groups);
+    this._filter = new Filter(this._characteristics, this._groups, this._references);
   }
 
   getCharacteristics() {
