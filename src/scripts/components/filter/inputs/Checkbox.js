@@ -22,7 +22,6 @@ export default React.createClass({
   },
   handleChange(event) {
     this.props.onChange({
-      name: event.target.name,
       value: event.target.value,
       checked: event.target.checked
     });
@@ -40,9 +39,7 @@ export default React.createClass({
         />;
 
     if (!this.props.label) {
-      return (
-        input
-      );
+      return input;
     }
     return (
       <label className='filter-radio-label'>{input} { this.props.label }</label>

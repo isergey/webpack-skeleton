@@ -4,7 +4,9 @@ import {getDefault} from './utils';
 import {initSchema} from './schema/schema';
 import YandexMaps from './components/map/YandexMaps';
 //import FieldSet from './components/filter/FieldSet'
-import Group from './components/filter/Group.js';
+import Group from './components/filter/Group';
+import Results from './components/search/results';
+import {search} from './api';
 
 /*class Events {
   constructor() {
@@ -34,7 +36,7 @@ events.on('click', function (data) {
 events.trigger('click', {a: 1});
 events.trigger('click1', {a: 1});*/
 
-
+/*
 var filterSchema1 = {
   //title: 'Основыне характеристики',
   fields: [
@@ -127,7 +129,7 @@ var filterSchema1 = {
       ]
     }
   ]
-};
+};*/
 
 
 initSchema().then((schema) => {
@@ -149,10 +151,12 @@ initSchema().then((schema) => {
     },
     getInitialState() {
       return {
-        filterValues: this.getInitialFilterValues()
+        filterValues: this.getInitialFilterValues(),
+        search: {},
+        searchId: 0
       };
     },
-    onFilterChange(data) {
+    filterChangeHandle(data) {
       var filterValues = this.state.filterValues;
       filterValues[data.name] = data.value;
 
@@ -163,21 +167,41 @@ initSchema().then((schema) => {
           newValues[key] = value;
         }
       }
+
       this.setState({
+        loading: true,
         filterValues: newValues
       });
+
+      setTimeout(() => {
+        var result = search();
+        result.done((data) => {
+          console.log('result done', data);
+          this.setState({
+            loading: false,
+            searchId: this.state.searchId + 1,
+            results: data
+          });
+        });
+      }, 1000);
+
       //console.log('onFilterChange1', data);
       console.log('filterValues', newValues);
     },
     render() {
+
       return (
         <div className='objects-search clearfix'>
           <div className='objects-search__map'>
             <YandexMaps/>
+            { !this.state.loading ?
+              <Results searchId={this.state.searchId} key={this.state.searchId} data={this.state.results}/> :
+              <div>Поиск объектов...</div>
+            }
           </div>
           <div className='objects-search__filter'>
             <Group
-              onChange={this.onFilterChange}
+              onChange={this.filterChangeHandle}
               filterValues={this.state.filterValues}
               expanded={true}
               expandable={filterSchema.expandable}

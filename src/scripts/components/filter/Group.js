@@ -40,7 +40,8 @@ var Group = React.createClass({
       needClose: false,
       expanded: false,
       filterValues: {},
-      onChange: () => {}
+      onChange: () => {
+      }
     };
   },
   getInitialState() {
@@ -60,8 +61,9 @@ var Group = React.createClass({
       expanded: !this.state.expanded
     });
   },
-  onChange(data) {
-    this.props.onChange(data);
+  changeHandle(fieldValue) {
+    console.log('group fieldValue', fieldValue);
+    this.props.onChange(fieldValue);
   },
   render() {
     var self = this;
@@ -69,41 +71,36 @@ var Group = React.createClass({
 
     var fields = this.props.fields.map((field, i) => {
       var showField = checkForShow(field, self.props.filterValues);
-      var input;
 
+      var input;
+      var inputProps = {};
       if (field.input === 'RadioSelect') {
-        input = (<RadioSelect
-          onChange={self.props.onChange}
-          name={field.name}
-          choices={field.choices}
-          initial={field.initial}/>
-        );
+        input = RadioSelect;
+        inputProps.choices = field.choices;
+        inputProps.name = field.name;
+
       } else if (field.input === 'CheckboxSelect') {
-        input = (<CheckboxSelect
-          onChange={self.props.onChange}
-          name={field.name}
-          choices={field.choices}
-          initial={field.initial}/>
-        );
+        input = CheckboxSelect;
+        inputProps.choices = field.choices;
+        inputProps.name = field.name;
       } else if (field.input === 'Range') {
-        input = (<Range
-          onChange={self.props.onChange}
-          name={field.name}
-          fromLabel={field.fromLabel}
-          toLabel={field.toLabel}/>
-        );
-      } else {
-        input = (<Text
-          onChange={self.props.onChange}
-          name={field.name}
-          initial={field.initial}/>
-        );
+        input = Range;
+        inputProps.fromLabel = field.fromLabel;
+        inputProps.toLabel = field.toLabel;
+
       }
 
       return (
-        <Field show={showField} key={i} name={field.name} title={field.title} expandable={field.expandable}>
-          {input}
-        </Field>
+        <Field
+          key={i}
+          name={field.name}
+          show={showField}
+          title={field.title}
+          expandable={field.expandable}
+          initial={field.initial}
+          input={input}
+          inputProps={inputProps}
+          onChange={this.changeHandle}/>
       );
     });
 
@@ -112,7 +109,7 @@ var Group = React.createClass({
         <li key={i} className="filter-group__children-item">
           <Group
             filterValues={self.props.filterValues}
-            onChange={self.onChange}
+            onChange={self.props.onChange}
             needClose={!self.state.expanded}
             title={child.title}
             fields={child.fields}
@@ -121,8 +118,8 @@ var Group = React.createClass({
       );
     });
 
-    var contentClasses = classnames('filter-group__content', {'filter-group__content_closed': !expanded });
-    var expanderClasses = classnames('filter-group__expander', {'filter-group__expander_closed': !expanded });
+    var contentClasses = classnames('filter-group__content', {'filter-group__content_closed': !expanded});
+    var expanderClasses = classnames('filter-group__expander', {'filter-group__expander_closed': !expanded});
     return (
       <div className="filter-group">
         { this.props.title ?

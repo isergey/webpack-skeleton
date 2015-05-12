@@ -21,10 +21,7 @@ export default React.createClass({
     };
   },
   handleChange(event) {
-    this.props.onChange({
-      name: event.target.name,
-      value: event.target.value
-    });
+    this.props.onChange(event.target.value);
   },
   render() {
     var input =

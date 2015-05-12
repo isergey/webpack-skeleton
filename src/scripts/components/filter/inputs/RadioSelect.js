@@ -5,14 +5,14 @@ import Radio from './Radio';
 export default React.createClass({
   getDefaultProps() {
     return {
-      name: '1',
+      name: '',
       initial: null,
       choices: [],
       onChange: () => {}
     };
   },
-  onChange(data) {
-    this.props.onChange(data);
+  onChange(value) {
+    this.props.onChange(value);
   },
   render() {
     var _this = this;

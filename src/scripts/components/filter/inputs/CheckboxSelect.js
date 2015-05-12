@@ -5,7 +5,7 @@ import Checkbox from './Checkbox';
 export default React.createClass({
   getDefaultProps() {
     return {
-      name: '1',
+      name: '',
       initial: [],
       choices: [],
       onChange: () => {
@@ -33,10 +33,7 @@ export default React.createClass({
         selectValue.push(key);
       }
     }
-    this.props.onChange({
-      name: data.name,
-      value: selectValue
-    });
+    this.props.onChange(selectValue);
   },
   render() {
     var _this = this;

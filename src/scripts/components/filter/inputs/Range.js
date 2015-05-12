@@ -7,15 +7,28 @@ export default React.createClass({
       name: '',
       initial: ['', ''],
       fromLabel: 'от',
-      toLabel: 'до'
+      toLabel: 'до',
+      onChange: () => {
+      }
     };
   },
-  /**
-   * TODO: Добавить обработку onChnage
-   */
+  changeHandle() {
+    this.props.onChange(this.getValue());
+  },
+  getValue() {
+    return [
+      React.findDOMNode(this.refs.from).value,
+      React.findDOMNode(this.refs.to).value
+    ];
+  },
   render() {
     return (
-      <div><span>{this.props.fromLabel}</span><input type="text"/> <span>{this.props.toLabel}</span><input type="text"/> <span></span></div>
+      <div>
+        <span>{this.props.fromLabel}</span>
+        <input ref='from' type="text" onChange={this.changeHandle}/>
+        <span>{this.props.toLabel}</span>
+        <input ref='to' type="text" onChange={this.changeHandle}/> <span></span>
+      </div>
     );
   }
 });
