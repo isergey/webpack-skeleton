@@ -6,7 +6,7 @@ var del = require('del');
 var gulp = require('gulp');
 var gnewer = require('gulp-newer');
 var gutil = require('gulp-util');
-var imagemin = require('gulp-imagemin');
+//var imagemin = require('gulp-imagemin');
 var minifyCSS = require('gulp-minify-css');
 var path = require('path');
 var plumber = require('gulp-plumber');
@@ -124,7 +124,7 @@ gulp.task('images', function () {
   var imageDest = path.join(paths.dist, 'images');
   gulp.src(paths.watch.images)
     .pipe(gnewer(imageDest))
-    .pipe(imagemin())
+    //.pipe(imagemin())
     .pipe(gulp.dest(imageDest));
 });
 
