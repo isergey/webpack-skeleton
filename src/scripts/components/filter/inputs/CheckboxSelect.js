@@ -1,4 +1,3 @@
-'use strict';
 import React from 'react';
 import Checkbox from './Checkbox';
 
@@ -14,38 +13,42 @@ export default React.createClass({
   },
   componentDidMount() {
     var self = this;
-    this._values = {};
+    this.values = {};
 
     if (Array.isArray(this.props.initial)) {
       this.props.initial.forEach((value) => {
-        self._values[value] = true;
+
+        self.values[value] = true;
       });
     } else {
-      self._values[this.props.initial] = true;
+      if (this.props.initial) {
+        self.values[this.props.initial] = true;
+      }
     }
 
   },
   onChange(data) {
-    this._values[data.value] = data.checked;
+    console.log(this.values);
+    this.values[data.value] = data.checked;
     var selectValue = [];
-    for (let key in this._values) {
-      if (this._values[key]) {
+    for (let key in this.values) {
+      if (this.values[key]) {
         selectValue.push(key);
       }
     }
     this.props.onChange(selectValue);
   },
   render() {
-    var _this = this;
+    var self = this;
     var itemsComponents = this.props.choices.map((choice, key) => {
       var choiceValue = choice[0], choiceLabel = choice[1];
       var checked = false;
 
-      if (Array.isArray(_this.props.initial)) {
-        if (_this.props.initial.indexOf(choiceValue) > -1) {
+      if (Array.isArray(self.props.initial)) {
+        if (self.props.initial.indexOf(choiceValue) > -1) {
           checked = true;
         }
-      } else if (choiceValue === _this.props.initial) {
+      } else if (choiceValue === self.props.initial) {
         checked = true;
       }
 

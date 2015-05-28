@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Build index of items on 'id' property of item
  * @param {Array} items

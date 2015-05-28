@@ -1,15 +1,20 @@
-'use strict';
+import {VALUE_TYPES} from './characteristics';
 
-export default class Filter {
+export const INPUT_TYPES = {
+  range: 'range'
+};
+
+
+export class Filter {
   /**
    * @param {Characteristics} characteristics
    * @param {Groups} groups
    * @param {References} references
    */
   constructor(characteristics, groups, references) {
-    this._characteristics = characteristics;
-    this._groups = groups;
-    this._references = references;
+    this.characteristics = characteristics;
+    this.groups = groups;
+    this.references = references;
   }
 
   /**
@@ -23,8 +28,8 @@ export default class Filter {
       return characteristic.showInFilter === true;
     };
 
-    for (let group of this._groups.getGroups()) {
-      let node = this._buildFilterNode(group, this._characteristics.getCharacteristicsByGroup(group.id)
+    for (let group of this.groups.getGroups()) {
+      let node = this.buildFilterNode(group, this.characteristics.getCharacteristicsByGroup(group.id)
         .filter(filterByShowInFilter));
       if (!filterSchema) {
         filterSchema = node;
@@ -38,7 +43,7 @@ export default class Filter {
     return filterSchema;
   }
 
-  _buildFilterNode(group, characteristics = []) {
+  buildFilterNode(group, characteristics = []) {
     var node = {
       title: group.name,
       fields: [],
@@ -56,7 +61,7 @@ export default class Filter {
           }
         }
       } else {
-        if (characteristic.filter.input === 'range') {
+        if (characteristic.filter.input === INPUT_TYPES.range) {
           input = 'Range';
         }
       }
@@ -64,7 +69,7 @@ export default class Filter {
       let field = {
         name: characteristic.id,
         title: characteristic.title,
-        type: characteristic.type || 'String',
+        type: characteristic.type || VALUE_TYPES.string,
         expandable: true,
         input: input,
         fromLabel: characteristic.filter.fromLabel,
@@ -96,7 +101,7 @@ export default class Filter {
       //}
 
       if (characteristic.reference) {
-        var reference = this._references.getReferenceById(characteristic.reference);
+        var reference = this.references.getReferenceById(characteristic.reference);
         for (let referenceItem of reference.getItems()) {
           field.choices.push([referenceItem.id, referenceItem.value]);
         }

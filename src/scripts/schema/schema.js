@@ -1,37 +1,74 @@
-'use strict';
-
-import $ from 'jquery';
-import Characteristics from './characteristics';
+import {Characteristics} from './characteristics';
 import Groups from './groups';
-import Filter from './filter';
+import {Filter, INPUT_TYPES} from './filter';
 import References from './references';
 
 
-var SCHEMA_URL = '/data/realty/schema.json';
-
-
-class Schema {
+export default class Schema {
   constructor(args) {
-    this._characteristics = args.characteristics;
-    this._groups = args.groups;
-    this._references = args.references;
-    this._filter = new Filter(this._characteristics, this._groups, this._references);
+    this.characteristics = args.characteristics;
+    this.groups = args.groups;
+    this.references = args.references;
+    this.filter = new Filter(this.characteristics, this.groups, this.references);
   }
 
   getCharacteristics() {
-    return this._characteristics;
+    return this.characteristics;
   }
 
   getGroups() {
-    return this._groups;
+    return this.groups;
   }
 
   getFilter() {
-    return this._filter;
+    return this.filter;
   }
 
   getReferences() {
-    return this._references;
+    return this.references;
+  }
+
+  buildSearchCriteria(filterValues) {
+    var criteriaList = [];
+    for (let charactersticId in filterValues) {
+      let characteristicValue = filterValues[charactersticId];
+      let charactersitic = this.characteristics.getCharacteristicById(charactersticId);
+      if (charactersitic === undefined) {
+        continue;
+      }
+
+      let criteriaValues = [];
+      let criteriaRanges = [];
+
+      if (Array.isArray(characteristicValue)) {
+        if (charactersitic.filter.multiple) {
+          for (let value of characteristicValue) {
+            criteriaValues.push({
+              value: value
+            });
+          }
+        } else if (characteristicValue.length > 1 && charactersitic.filter.input === INPUT_TYPES.range) {
+          criteriaRanges.push({
+            from: characteristicValue[0],
+            to: characteristicValue[1]
+          });
+        }
+      } else {
+        criteriaValues.push({
+          value: characteristicValue
+        });
+      }
+
+      criteriaList.push({
+        id: charactersticId,
+        type: charactersitic.type,
+        values: criteriaValues,
+        ranges: criteriaRanges
+      });
+
+    }
+
+    return criteriaList;
   }
 
   static fromJson(data = {}) {
@@ -43,12 +80,3 @@ class Schema {
   }
 }
 
-export const initSchema = () => {
-  return new Promise((resolve, reject) => {
-    $.get(SCHEMA_URL).done((data) => {
-      resolve(Schema.fromJson(data));
-    }).error((error) => {
-      reject(error);
-    });
-  });
-};

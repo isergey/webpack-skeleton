@@ -1,14 +1,13 @@
-'use strict';
 import React from 'react';
 
 export default React.createClass({
   componentDidMount() {
     var selfNode = React.findDOMNode(this);
-    const _this = this;
+    const self = this;
     this.map = null;
 
     window.DG.then(function () {
-      _this.map = window.DG.map(selfNode, {
+      self.map = window.DG.map(selfNode, {
         center: [59.936081, 30.317960],
         zoom: 13
       });
@@ -30,4 +29,5 @@ export default React.createClass({
       </div>
     );
   }
-})
+});
+

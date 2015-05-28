@@ -1,4 +1,3 @@
-'use strict';
 var argv = require('yargs').argv;
 var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync');
@@ -70,15 +69,20 @@ gulp.task('webpack', [], function () {
       plugins: plugins,
       module: {
         loaders: [
-          {
-            test: /\.ts$/,
-            exclude: /node_modules/,
-            loader: 'typescript-loader?typescriptCompiler=jsx-typescript'
-          },
+          //{
+          //  test: /\.ts$/,
+          //  exclude: /node_modules/,
+          //  loader: 'typescript-loader?typescriptCompiler=jsx-typescript'
+          //},
           {
             test: /\.jsx?$/,
             exclude: /node_modules/,
             loaders: ['babel-loader']
+          },
+          {
+            test: /\.js$/,
+            loader: 'eslint-loader',
+            exclude: /node_modules/
           }
         ]
       },

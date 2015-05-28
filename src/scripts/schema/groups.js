@@ -1,5 +1,3 @@
-'use strict';
-
 import {buildIndexOnId} from './../utils';
 
 class Group {
@@ -16,7 +14,7 @@ class Group {
 
 export default class Groups {
   constructor(groups = []) {
-    this._groups = groups.sort((current, next) => {
+    this.groups = groups.sort((current, next) => {
       var order = 0;
 
       if (current.order < next.order) {
@@ -27,11 +25,11 @@ export default class Groups {
 
       return order;
     });
-    this._groupsIndex = buildIndexOnId(this._groups);
+    this.groupsIndex = buildIndexOnId(this.groups);
   }
 
   getGroups() {
-    return this._groups;
+    return this.groups;
   }
 
   /**
@@ -40,7 +38,7 @@ export default class Groups {
    * @returns {*|undefined}
    */
   getGroupById(id) {
-    return this._groupsIndex[id];
+    return this.groupsIndex[id];
   }
 
   static fromJson(groupList = []) {

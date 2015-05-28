@@ -1,4 +1,3 @@
-'use strict';
 import React from 'react';
 import Radio from './Radio';
 
@@ -15,7 +14,7 @@ export default React.createClass({
     this.props.onChange(value);
   },
   render() {
-    var _this = this;
+    var self = this;
 
     var itemsComponents = this.props.choices.map((choice, key) => {
       var choiceValue = choice[0], choiceLabel = choice[1];
@@ -26,7 +25,7 @@ export default React.createClass({
             name={this.props.name}
             label={choiceLabel}
             value={choiceValue}
-            checked={ _this.props.initial === choiceValue }
+            checked={ self.props.initial === choiceValue }
             />
         </div>);
     });

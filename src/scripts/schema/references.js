@@ -1,4 +1,3 @@
-'use strict';
 import {buildIndexOnId} from './../utils';
 
 class ReferenceItem {
@@ -34,12 +33,12 @@ class Reference {
 
 export default class References {
   constructor(references = []) {
-    this._references = references;
-    this._referencesIndex = buildIndexOnId(references);
+    this.references = references;
+    this.referencesIndex = buildIndexOnId(references);
   }
 
   getReferenceById(id) {
-    return this._referencesIndex[id];
+    return this.referencesIndex[id];
   }
 
   static fromJson(referenceList = []) {

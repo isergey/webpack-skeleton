@@ -1,18 +1,93 @@
-'use strict';
+/* eslint new-cap:1 */
+
 import $ from 'jquery';
 
-const SEARCH_URL = 'data/realty/search/results.json';
+const BASE_ADDR = 'http://127.0.0.1:8080';
 
+export default class Api {
+  constructor(params) {
+    this.addr = params.addr;
+  }
 
-const search = (args) => {
-  var defer = $.Deferred();
-  $.get(SEARCH_URL).done((data) => {
-    defer.resolve(data);
-  }).error((error) => {
-    console.log(error);
-    defer.reject(error);
-  });
-  return defer;
-};
+  schema() {
+    var defer = $.Deferred();
+    $.get(`${BASE_ADDR}/schema`).done((data) => {
+      defer.resolve(data);
+    }).error((error) => {
+      defer.reject(error);
+    });
+    return defer;
+  }
 
-export {search};
+  /**
+   *
+   * @param criteria
+   *  [
+     {
+       id: '000000011',
+       type: 'String',
+       values: [
+         {
+           value: '000000016'
+         }
+       ],
+       ranges: [
+         {
+           from: '',
+           to: ''
+         }
+       ]
+     }
+   ]
+   * @param offset
+   * @param limit
+   * @param variant
+   * @param status
+   * @param city 000000001
+   * @param prelimiary
+   * @returns {*}
+   */
+  search(criteria = [], offset = 0, limit = 10, variant = '', status = '', city = '', prelimiary = true) {
+    var defer = $.Deferred();
+    var requestData = JSON.stringify({
+      listCriteria: {
+        criteria: criteria
+      },
+      offset: offset,
+      limit: limit,
+      variant: variant,
+      status: status,
+      city: city,
+      prelimiary: prelimiary
+    });
+    console.log(requestData);
+    $.ajax({
+      url: `${BASE_ADDR}/search`,
+      method: 'post',
+      contentType: 'application/json',
+      dataType: 'json',
+      crossDomain: true,
+      data: requestData
+    }).done(function (data) {
+      console.log(data);
+      defer.resolve(data);
+    }).error(function (error) {
+      console.error(error);
+      defer.reject(error);
+    });
+    return defer;
+  }
+
+;
+}
+
+//const search = (args) => {
+//  var defer = $.Deferred();
+//  $.get(SEARCH_URL).done((data) => {
+//    defer.resolve(data);
+//  }).error((error) => {
+//    console.log(error);
+//    defer.reject(error);
+//  });
+//  return defer;
+//};

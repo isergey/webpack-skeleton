@@ -1,4 +1,3 @@
-'use strict';
 import React from 'react/addons';
 import classnames from 'classnames';
 
@@ -6,7 +5,7 @@ import Field from './Field.js';
 import RadioSelect from './inputs/RadioSelect';
 import CheckboxSelect from './inputs/CheckboxSelect';
 import Range from './inputs/Range';
-import Text from './inputs/Text';
+//import Text from './inputs/Text';
 
 
 var checkForShow = (field, filterValues) => {
@@ -62,7 +61,6 @@ var Group = React.createClass({
     });
   },
   changeHandle(fieldValue) {
-    console.log('group fieldValue', fieldValue);
     this.props.onChange(fieldValue);
   },
   render() {

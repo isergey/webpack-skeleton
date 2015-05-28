@@ -1,5 +1,3 @@
-'use strict';
-
 import {buildIndexOnId, getDefault} from './../utils';
 
 
@@ -58,8 +56,16 @@ class Filter {
   }
 }
 
+export const VALUE_TYPES = {
+  string: 'String',
+  number: 'Number',
+  boolean: 'Boolean',
+  date: 'Date'
+};
+
 
 class Characteristic {
+
   constructor(args) {
     this.filter = getDefault(args.filter, null);
     this.group = args.group;
@@ -68,7 +74,7 @@ class Characteristic {
     this.reference = getDefault(args.reference, null);
     this.showInFilter = getDefault(args.showInFilter, false);
     this.title = getDefault(args.title, '');
-    this.type = getDefault(args.type, 'String');
+    this.type = getDefault(args.type, VALUE_TYPES.string);
     this.unitId = getDefault(args.unitId, '');
   }
 
@@ -89,11 +95,11 @@ class Characteristic {
 }
 
 
-export default class Characteristics {
+export class Characteristics {
   constructor(characteristics = []) {
-    this._characteristics = characteristics;
-    this._characteristicsIndex = buildIndexOnId(this._characteristics);
-    this._characteristicsByGroups = Characteristics._buildCharacteristicsByGroups(this._characteristics);
+    this.characteristics = characteristics;
+    this.characteristicsIndex = buildIndexOnId(this.characteristics);
+    this.characteristicsByGroups = Characteristics.buildCharacteristicsByGroups(this.characteristics);
   }
 
   /**
@@ -102,7 +108,7 @@ export default class Characteristics {
    * @returns {Characteristic|undefined}
    */
   getCharacteristicById(id) {
-    return this._characteristicsIndex[id];
+    return this.characteristicsIndex[id];
   }
 
   /**
@@ -111,7 +117,7 @@ export default class Characteristics {
    * @returns {*|Array}
    */
   getCharacteristicsByGroup(groupId) {
-    return this._characteristicsByGroups[groupId] || [];
+    return this.characteristicsByGroups[groupId] || [];
   }
 
   static fromJson(characteristicList = []) {
@@ -122,7 +128,7 @@ export default class Characteristics {
     return new Characteristics(characteristics);
   }
 
-  static _buildCharacteristicsByGroups(characteristics = []) {
+  static buildCharacteristicsByGroups(characteristics = []) {
     var index = {};
     characteristics.forEach((characteristicsItem) => {
       var groupCharacteristics = index[characteristicsItem.group];
@@ -151,8 +157,8 @@ export default class Characteristics {
     })();
 
     for (var groupId in index) {
-      let characteristics = index[groupId] || [];
-      index[groupId] = characteristics.sort(characteristicsComparator);
+      let lcharacteristics = index[groupId] || [];
+      index[groupId] = lcharacteristics.sort(characteristicsComparator);
     }
     return index;
   }
