@@ -35,7 +35,8 @@ gulp.task('webpack', [], function () {
 
   var plugins = [
     new webpack.optimize.CommonsChunkPlugin('commons.js'),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /ru/)
   ];
 
   if (RELEASE_MODE) {
