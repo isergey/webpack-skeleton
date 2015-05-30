@@ -39,7 +39,11 @@ export default React.createClass({
       value: value
     });
   },
+  shouldComponentUpdate: function(nextProps, nextState) {
+    return (nextProps.expanded ? 1 : 0) !== nextState.expanded;
+  },
   render() {
+    //console.log('field render');
     var filterFieldClasses = classnames('filter-field', {'filter-field_hidden': !this.props.show});
     var expanderClasses = classnames('filter-field__expander', {'filter-field__expander_closed': !this.state.expanded });
     var filterInputClasses = classnames( 'filter-field__input', {'filter-field__input_closed': !this.state.expanded });

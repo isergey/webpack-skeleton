@@ -1,14 +1,14 @@
 import React from 'react';
 import {getDefault} from './utils';
 import Schema from './schema/schema';
-//import Loader from './components/common/loader';
-//import Error from './components/common/error';
-import YandexMaps from './components/map/YandexMaps';
-//import FieldSet from './components/filter/FieldSet'
+import Map from './components/map/YandexMaps';
 import Group from './components/filter/Group';
-//import Results from './components/search/results';
+import {SearchResult} from './components/search/results';
 import Api from './api';
 
+var settings = {
+  staticHost: 'ftp://95.55.146.178'
+};
 
 var api = new Api({
   addr: 'http://127.0.0.1:8080'
@@ -16,45 +16,23 @@ var api = new Api({
 
 
 var Filter = React.createClass({
-  componentDidMount() {
-    this.canSeach = true;
-    this.lastSearchCriteria = '';
-    api.schema().done((data) => {
-      var schema = Schema.fromJson(data);
-      var filter = schema.getFilter();
-      var filterSchema = filter.buildFilterSchema();
-      this.setState({
-        loaded: true,
-        schema: schema,
-        filter: filter,
-        filterSchema: filterSchema,
-        filterValues: this.getInitialFilterValues(filterSchema)
-      });
-    }).fail((error) => {
-      console.error('Error while schema loading', error);
-      this.setState({
-        error: 'Ошибка блеать!'
-      });
-    });
+  getDefaultProps() {
+    return {
+      onSubmit: () => {}
+    };
   },
   getInitialState() {
     return {
-      loaded: false,
       error: '',
       schema: null,
       filter: null,
       filterSchema: null,
-      filterValues: null
+      filterValues: this.props.filterValues
     };
   },
-  getInitialFilterValues(filterSchema) {
-    var values = {};
-    filterSchema.fields.forEach((field) => {
-      if (field.initial !== undefined) {
-        values[field.name] = field.initial;
-      }
-    });
-    return values;
+  componentDidMount() {
+    this.canSeach = true;
+    this.lastSearchCriteria = '';
   },
   filterChangeHandle(data) {
     var filterValues = this.state.filterValues;
@@ -71,6 +49,52 @@ var Filter = React.createClass({
         }
       }
     }
+    this.setState({
+      filterValues: filterValues
+    });
+    this.props.onSubmit(filterValues);
+  },
+  render() {
+    return (
+      <Group
+        onChange={this.filterChangeHandle}
+        filterValues={this.state.filterValues}
+        expanded={true}
+        expandable={this.props.filterSchema.expandable}
+        title={this.props.filterSchema.title}
+        fields={this.props.filterSchema.fields}
+        children={this.props.filterSchema.children}/>
+    );
+  }
+});
+
+
+var App = React.createClass({
+  onFilterSubmit(criteria) {
+    console.log('on Submit', criteria);
+  },
+  getInitialState() {
+    return {
+      loaded: false,
+      resultResponse: null,
+      selectedCode: '',
+      schema: null,
+      filter: null,
+      filterSchema: null,
+      filterValues: null,
+      detailObject: {}
+    };
+  },
+  getInitialFilterValues(filterSchema) {
+    var values = {};
+    filterSchema.fields.forEach((field) => {
+      if (field.initial !== undefined) {
+        values[field.name] = field.initial;
+      }
+    });
+    return values;
+  },
+  filterChangeHandle(filterValues) {
     var criteria = this.state.schema.buildSearchCriteria(filterValues);
     console.log('criteria', criteria);
     var jsonFilterValues = JSON.stringify(filterValues);
@@ -83,48 +107,89 @@ var Filter = React.createClass({
     if (this.canSeach) {
 
       this.canSeach = false;
-      setTimeout(() => {
-        this.canSeach = true;
-      }, 3000);
       api.search(criteria).done((resultResponse) => {
-        console.log('founded', resultResponse);
+        console.log('resultResponse', resultResponse);
+        this.canSeach = true;
+        this.refs.map.drowBaloons(resultResponse.objects || []);
+        this.setState({
+          resultResponse: resultResponse
+        });
       }).fail((error) => {
+        this.canSeach = true;
         console.error('error while search', error);
       });
     } else {
       console.log('Too mach request per secord');
     }
+
   },
-  render() {
-    if (!this.state.loaded) {
-      return (
-        <div>Инициализация фильра</div>
-      );
-    }
-    return (
-      <Group
-        onChange={this.filterChangeHandle}
-        filterValues={this.state.filterValues}
-        expanded={true}
-        expandable={this.state.filterSchema.expandable}
-        title={this.state.filterSchema.title}
-        fields={this.state.filterSchema.fields}
-        children={this.state.filterSchema.children}/>
-    );
-  }
-});
-
-
-var App = React.createClass({
+  componentDidMount() {
+    var self = this;
+    this.canSeach = true;
+    api.schema().done((data) => {
+      var schema = Schema.fromJson(data);
+      var filter = schema.getFilter();
+      var filterSchema = filter.buildFilterSchema();
+      self.setState({
+        loaded: true,
+        schema: schema,
+        filter: filter,
+        filterSchema: filterSchema,
+        filterValues: this.getInitialFilterValues(filterSchema)
+      });
+    }).fail((error) => {
+      console.error('Error while schema loading', error);
+      self.setState({
+        error: 'Ошибка блеать!'
+      });
+    });
+  },
+  onBaloonClick(code) {
+    this.setState({
+      selectedCode: code
+    });
+  },
+  rowSelectHandle(objectData) {
+    //console.log('objectData', objectData);
+    api.detail(objectData.code).done((data) => {
+      console.log('detail', data);
+      this.setState({
+        detailObject: data
+      });
+    }).fail(() => {
+      console.error('При загрузке детальной информации возникла ошибка');
+    });
+  },
   render() {
     return (
       <div className='objects-search clearfix'>
+        <div className="objects-search__results">
+          {
+            this.state.resultResponse ?
+              <SearchResult onSelect={this.rowSelectHandle}
+                            settings={settings}
+                            total={this.state.resultResponse.total}
+                            objects={this.state.resultResponse.objects}
+                            selectedCode={this.state.selectedCode}
+                            schema={this.state.schema}
+                            detailObject={this.state.detailObject}/>
+              : <div>Укажите условия поиска</div>
+          }
+        </div>
         <div className='objects-search__map'>
-          <YandexMaps />
+          <Map ref='map' onBaloonClick={this.onBaloonClick} objects={(this.state.resultResponse || {}).objects || []}/>
         </div>
-        <div className='objects-search__filter'>
-          <Filter />
-        </div>
+        {
+          this.state.loaded ?
+          <div className='objects-search__filter'>
+            <Filter schema={this.state.schema}
+                    filter={this.state.filter}
+                    filterSchema={this.state.filterSchema}
+                    filterValues={this.state.filterValues}
+                    onSubmit={this.filterChangeHandle}/>
+          </div>
+          : <div>Загрузка фильтра объектов...</div>
+        }
       </div>
     );
   }
@@ -135,97 +200,4 @@ React.render(
   <App />,
   document.getElementById('app')
 );
-
-
-/*initSchema().then((schema) => {
- console.log(schema);
- //console.log('schema getCharacteristics', schema.getCharacteristics());
- //console.log('schema getCharacteristics', schema.getGroups());
- //console.log('schema getFilter', schema.getFilter().buildFilterSchema());
- var filterSchema = schema.getFilter().buildFilterSchema();
- console.log('filterSchema', filterSchema);
- var App = React.createClass({
- getInitialFilterValues() {
- var values = {};
- filterSchema.fields.forEach((field) => {
- if (field.initial !== undefined) {
- values[field.name] = field.initial;
- }
- });
- return values;
- },
- getInitialState() {
- return {
- filterValues: this.getInitialFilterValues(),
- search: {},
- searchId: 0
- };
- },
- filterChangeHandle(data) {
- var filterValues = this.state.filterValues;
- filterValues[data.name] = data.value;
-
- var newValues = {};
- for (let key in filterValues) {
- let value = filterValues[key];
- if (getDefault(value, null) !== null) {
- newValues[key] = value;
- }
- }
-
- this.setState({
- loading: true,
- filterValues: newValues
- });
-
- setTimeout(() => {
- var result = search();
- result.done((data) => {
- console.log('result done', data);
- this.setState({
- loading: false,
- searchId: this.state.searchId + 1,
- results: data
- });
- });
- }, 1000);
-
- //console.log('onFilterChange1', data);
- console.log('filterValues', newValues);
- },
- render() {
-
- return (
- <div className='objects-search clearfix'>
- <div className='objects-search__map'>
- <YandexMaps/>
- { !this.state.loading ?
- <Results searchId={this.state.searchId} key={this.state.searchId} data={this.state.results}/> :
- <div>Поиск объектов...</div>
- }
- </div>
- <div className='objects-search__filter'>
- <Group
- onChange={this.filterChangeHandle}
- filterValues={this.state.filterValues}
- expanded={true}
- expandable={filterSchema.expandable}
- title={filterSchema.title}
- fields={filterSchema.fields}
- children={filterSchema.children}/>
- </div>
- </div>
- );
- }
- });
-
- React.render(
- <App />,
- document.getElementById('app')
- );
-
- }).catch((error) => {
- console.log('schema not loaded', error);
- console.error(error.stack);
- });*/
 

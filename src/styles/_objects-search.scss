@@ -1,13 +1,40 @@
 .objects-search {
 
 }
-
-.objects-search__filter {
+.objects-search__results {
   float: left;
-  width: 50%;
+  width: 35%;
 }
 
 .objects-search__map {
   float: left;
-  width: 50%;
+  width: 45%;
+}
+
+
+.objects-search__filter {
+  float: left;
+  width: 20%;
+}
+
+
+.search-row {
+  overflow: auto;
+  padding: 5px;
+  margin: 0 0 10px 0;
+  background: #fafafa;
+  border: 1px #e0e0e0 solid;
+}
+
+.search-row_selected {
+  background: #e7fadb;
+}
+
+
+.search-row__left {
+  float: left;
+  width: 100px;
+}
+.search-row__right {
+  margin-left: 100px;
 }

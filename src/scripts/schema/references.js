@@ -16,10 +16,19 @@ class Reference {
   constructor(id = '', items = []) {
     this.id = id;
     this.items = items;
+    this.itemIndex = buildIndexOnId(items);
   }
 
   getItems() {
     return this.items;
+  }
+
+  getItemById(id) {
+    var item = this.itemIndex[id];
+    if (item === undefined) {
+      return null;
+    }
+    return item;
   }
 
   static fromJson(data) {
@@ -38,7 +47,20 @@ export default class References {
   }
 
   getReferenceById(id) {
-    return this.referencesIndex[id];
+    var reference = this.referencesIndex[id];
+    return reference === undefined ? null : reference;
+  }
+
+  /**
+   * Get reference item
+   * @param referenceId
+   * @param itemId
+   * @returns {ReferenceItem | null}
+   */
+  getItem(referenceId, itemId) {
+    var reference = this.getReferenceById(referenceId);
+    return reference === null ? null : reference.getItemById(itemId);
+
   }
 
   static fromJson(referenceList = []) {

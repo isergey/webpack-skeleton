@@ -1,15 +1,17 @@
-import {Characteristics} from './characteristics';
+import {Characteristics, VALUE_TYPES} from './characteristics';
 import Groups from './groups';
 import {Filter, INPUT_TYPES} from './filter';
 import References from './references';
-
+import Units from './units';
 
 export default class Schema {
   constructor(args) {
     this.characteristics = args.characteristics;
     this.groups = args.groups;
     this.references = args.references;
+    this.units = args.units;
     this.filter = new Filter(this.characteristics, this.groups, this.references);
+
   }
 
   getCharacteristics() {
@@ -26,6 +28,10 @@ export default class Schema {
 
   getReferences() {
     return this.references;
+  }
+
+  getUnits() {
+    return this.units;
   }
 
   buildSearchCriteria(filterValues) {
@@ -48,9 +54,23 @@ export default class Schema {
             });
           }
         } else if (characteristicValue.length > 1 && charactersitic.filter.input === INPUT_TYPES.range) {
+          let from = characteristicValue[0];
+          let to = characteristicValue[1];
+
+          if (charactersitic.type === VALUE_TYPES.number) {
+            from = parseFloat(from) || '';
+            to = parseFloat(to) || '';
+          }
+          if (!from) {
+            from = '';
+          }
+
+          if (!to) {
+            to = '';
+          }
           criteriaRanges.push({
-            from: characteristicValue[0],
-            to: characteristicValue[1]
+            from: from,
+            to: to
           });
         }
       } else {
@@ -75,7 +95,8 @@ export default class Schema {
     return new Schema({
       characteristics: Characteristics.fromJson(data.characteristicSchemas),
       groups: Groups.fromJson(data.groups),
-      references: References.fromJson(data.references)
+      references: References.fromJson(data.references),
+      units: Units.fromJson(data.units)
     });
   }
 }
