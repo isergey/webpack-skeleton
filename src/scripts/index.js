@@ -1,18 +1,10 @@
 import React from 'react';
+import {api} from './api';
 import {getDefault} from './utils';
 import Schema from './schema/schema';
 import Map from './components/map/YandexMaps';
 import Group from './components/filter/Group';
 import {SearchResult} from './components/search/results';
-import Api from './api';
-
-var settings = {
-  staticHost: 'ftp://95.55.146.178'
-};
-
-var api = new Api({
-  addr: 'http://127.0.0.1:8080'
-});
 
 
 var Filter = React.createClass({
@@ -148,17 +140,19 @@ var App = React.createClass({
     this.setState({
       selectedCode: code
     });
+    console.log('code code', code);
+    this.refs.resultSet.setSelectedCode(code);
   },
-  rowSelectHandle(objectData) {
-    //console.log('objectData', objectData);
-    api.detail(objectData.code).done((data) => {
-      console.log('detail', data);
-      this.setState({
-        detailObject: data
-      });
-    }).fail(() => {
-      console.error('При загрузке детальной информации возникла ошибка');
-    });
+  rowSelectHandle() {
+    ////console.log('objectData', objectData);
+    //api.detail(objectData.code).done((data) => {
+    //  console.log('detail', data);
+    //  this.setState({
+    //    detailObject: data
+    //  });
+    //}).fail(() => {
+    //  console.error('При загрузке детальной информации возникла ошибка');
+    //});
   },
   render() {
     return (
@@ -166,13 +160,11 @@ var App = React.createClass({
         <div className="objects-search__results">
           {
             this.state.resultResponse ?
-              <SearchResult onSelect={this.rowSelectHandle}
-                            settings={settings}
+              <SearchResult ref='resultSet' onRowSelect={this.rowSelectHandle}
                             total={this.state.resultResponse.total}
                             objects={this.state.resultResponse.objects}
                             selectedCode={this.state.selectedCode}
-                            schema={this.state.schema}
-                            detailObject={this.state.detailObject}/>
+                            schema={this.state.schema} />
               : <div>Укажите условия поиска</div>
           }
         </div>

@@ -1,5 +1,7 @@
 import moment from 'moment';
 import React from 'react';
+import settings from '../../settings';
+import {api} from '../../api';
 import {VALUE_TYPES} from '../../schema/characteristics';
 
 export const Detail = React.createClass({
@@ -8,11 +10,40 @@ export const Detail = React.createClass({
       detailObject: {}
     };
   },
+  getInitialState() {
+    return {
+      error: '',
+      loaded: false,
+      detailObject: {}
+    };
+  },
+  componentDidMount() {
+    api.detail(this.props.itemData.code).done((detailData) => {
+      this.setState({
+        loaded: true,
+        detailObject: detailData
+      });
+    }).fail(() => {
+      this.setState({
+        error: 'При загрузке информации возникла ошибка. Попробуйте позже...'
+      });
+    });
+  },
   render() {
+    if (this.state.error) {
+      return (
+        <div>{this.state.error}</div>
+      );
+    }
+    if (!this.state.loaded) {
+      return (
+        <div>Загрузка информации об объекте...</div>
+      );
+    }
     var characteristics = this.props.schema.getCharacteristics();
     var references = this.props.schema.getReferences();
     var units = this.props.schema.getUnits();
-    var attrsRows = ((this.props.detailObject.object || {}).charactiristicValues || []).map((charactiristicValue, i) => {
+    var attrsRows = ((this.state.detailObject.object || {}).charactiristicValues || []).map((charactiristicValue, i) => {
       var characteristicSchema = characteristics.getCharacteristicById(charactiristicValue.id);
 
       let characteristicValue = '';
@@ -84,7 +115,6 @@ var ResultRow = React.createClass({
         variant: '',
         videoCount: '0'
       },
-      settings: {},
       isSelected: false,
       detailObject: {},
       onClick: () => {
@@ -96,11 +126,14 @@ var ResultRow = React.createClass({
       showDetail: this.props.showDetail
     };
   },
+  componentWillReceiveProps(props) {
+    console.log('new props', props);
+  },
   onClickHandle() {
     this.props.onClick(this.props.data);
-    //this.setState({
-    //  showDetail: true
-    //});
+    this.setState({
+      showDetail: true
+    });
   },
   render() {
     var shortInfo = this.props.data.shortInfo.map((item, i) => {
@@ -119,7 +152,7 @@ var ResultRow = React.createClass({
           <div className="search-row__left">
             {
               this.props.data.pathPhoto ?
-                <div><img width="100%" src={this.props.settings.staticHost + this.props.data.pathPhoto}/></div>
+                <div><img width="100%" src={settings.staticHost + this.props.data.pathPhoto}/></div>
                 : null
             }
             <div>
@@ -137,8 +170,8 @@ var ResultRow = React.createClass({
             <div>Статус: {this.props.data.status} {this.props.data.variant}</div>
           </div>
         </div>
-        { this.props.data.code === (this.props.detailObject.object || {}).code ?
-          <Detail detailObject={this.props.detailObject} schema={this.props.schema}/> : null}
+        { this.props.isSelected && this.state.showDetail ?
+          <Detail itemData={this.props.data} schema={this.props.schema}/> : null}
       </div>
     );
   }
@@ -150,24 +183,35 @@ export const SearchResult = React.createClass({
     return {
       total: 0,
       objects: [],
-      settings: {},
       selectedCode: '',
-      detailObject: {},
-      onSelect: () => {
+      onRowSelect: () => {
       }
     };
   },
+  setSelectedCode(selectedCode) {
+    this.setState({
+      selectedCode: selectedCode
+    });
+  },
+  getInitialState() {
+    return {
+      selectedCode: this.props.selectedCode
+    };
+  },
   rowClickHandle(item) {
-    this.props.onSelect(item);
+    this.props.onRowSelect(item);
+    this.setState({
+      selectedCode: item.code
+    });
+    console.log('item item', item);
   },
   render() {
     var results = this.props.objects.map((item, i) => {
       return (
         <ResultRow onClick={this.rowClickHandle}
                    schema={this.props.schema}
-                   detailObject={this.props.detailObject}
-                   isSelected={this.props.selectedCode === item.code}
-                   settings={this.props.settings} key={i} data={item}/>
+                   isSelected={this.state.selectedCode === item.code}
+                   key={i} data={item}/>
       );
     });
 

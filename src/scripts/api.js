@@ -1,19 +1,18 @@
 /* eslint new-cap:1 */
 
 import $ from 'jquery';
-
-const BASE_ADDR = 'http://127.0.0.1:8080';
+import settings from './settings';
 
 const DETAIL_CACHE = {};
 
-export default class Api {
+class Api {
   constructor(params) {
     this.addr = params.addr;
   }
 
   schema() {
     var defer = $.Deferred();
-    $.get(`${BASE_ADDR}/schema`).done((data) => {
+    $.get(`${this.addr}/schema`).done((data) => {
       defer.resolve(data);
     }).error((error) => {
       defer.reject(error);
@@ -64,7 +63,7 @@ export default class Api {
     });
     console.log(requestData);
     $.ajax({
-      url: `${BASE_ADDR}/search`,
+      url: `${this.addr}/search`,
       method: 'post',
       contentType: 'application/json',
       dataType: 'json',
@@ -93,7 +92,7 @@ export default class Api {
       return defer;
     }
 
-    $.get(`${BASE_ADDR}/detail`, {
+    $.get(`${this.addr}/detail`, {
       code: code
     }).done((data) => {
       DETAIL_CACHE[code] = data;
@@ -105,6 +104,13 @@ export default class Api {
     return defer;
   }
 }
+
+
+export const api = new Api({
+  addr: settings.apiHost
+});
+
+
 
 //const search = (args) => {
 //  var defer = $.Deferred();
