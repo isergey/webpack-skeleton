@@ -115,7 +115,8 @@ var ResultRow = React.createClass({
         variant: '',
         videoCount: '0'
       },
-      isSelected: false,
+      selectedCode: '',
+      showDetail: false,
       detailObject: {},
       onClick: () => {
       }
@@ -127,9 +128,16 @@ var ResultRow = React.createClass({
     };
   },
   componentWillReceiveProps(props) {
-    console.log('new props', props);
+    if (this.state.showDetail && !props.showDetail) {
+      this.setState({
+        showDetail: false
+      });
+    }
   },
   onClickHandle() {
+    if (this.props.selectedCode === this.props.data.code) {
+      return;
+    }
     this.props.onClick(this.props.data);
     this.setState({
       showDetail: true
@@ -142,7 +150,7 @@ var ResultRow = React.createClass({
 
     var rowClasses = ['search-row'];
 
-    if (this.props.isSelected) {
+    if (this.props.selectedCode === this.props.data.code) {
       rowClasses.push('search-row_selected');
     }
 
@@ -170,7 +178,7 @@ var ResultRow = React.createClass({
             <div>Статус: {this.props.data.status} {this.props.data.variant}</div>
           </div>
         </div>
-        { this.props.isSelected && this.state.showDetail ?
+        { this.props.selectedCode === this.props.data.code && this.state.showDetail ?
           <Detail itemData={this.props.data} schema={this.props.schema}/> : null}
       </div>
     );
@@ -183,7 +191,6 @@ export const SearchResult = React.createClass({
     return {
       total: 0,
       objects: [],
-      selectedCode: '',
       onRowSelect: () => {
       }
     };
@@ -195,7 +202,7 @@ export const SearchResult = React.createClass({
   },
   getInitialState() {
     return {
-      selectedCode: this.props.selectedCode
+      selectedCode: ''
     };
   },
   rowClickHandle(item) {
@@ -204,13 +211,15 @@ export const SearchResult = React.createClass({
       selectedCode: item.code
     });
     console.log('item item', item);
+    console.log(this.refs);
   },
   render() {
     var results = this.props.objects.map((item, i) => {
       return (
         <ResultRow onClick={this.rowClickHandle}
                    schema={this.props.schema}
-                   isSelected={this.state.selectedCode === item.code}
+                   selectedCode={this.state.selectedCode}
+                   showDetail={this.state.selectedCode === item.code}
                    key={i} data={item}/>
       );
     });

@@ -102,6 +102,7 @@ var App = React.createClass({
       api.search(criteria).done((resultResponse) => {
         console.log('resultResponse', resultResponse);
         this.canSeach = true;
+        this.resultId++;
         this.refs.map.drowBaloons(resultResponse.objects || []);
         this.setState({
           resultResponse: resultResponse
@@ -118,6 +119,7 @@ var App = React.createClass({
   componentDidMount() {
     var self = this;
     this.canSeach = true;
+    this.resultId = 0;
     api.schema().done((data) => {
       var schema = Schema.fromJson(data);
       var filter = schema.getFilter();
@@ -137,22 +139,11 @@ var App = React.createClass({
     });
   },
   onBaloonClick(code) {
-    this.setState({
-      selectedCode: code
-    });
-    console.log('code code', code);
+    this.refs.map.hintBaloon(code);
     this.refs.resultSet.setSelectedCode(code);
   },
-  rowSelectHandle() {
-    ////console.log('objectData', objectData);
-    //api.detail(objectData.code).done((data) => {
-    //  console.log('detail', data);
-    //  this.setState({
-    //    detailObject: data
-    //  });
-    //}).fail(() => {
-    //  console.error('При загрузке детальной информации возникла ошибка');
-    //});
+  rowSelectHandle(params) {
+    this.refs.map.hintBaloon(params.code);
   },
   render() {
     return (
@@ -160,10 +151,9 @@ var App = React.createClass({
         <div className="objects-search__results">
           {
             this.state.resultResponse ?
-              <SearchResult ref='resultSet' onRowSelect={this.rowSelectHandle}
+              <SearchResult key={this.resultId} ref='resultSet' onRowSelect={this.rowSelectHandle}
                             total={this.state.resultResponse.total}
                             objects={this.state.resultResponse.objects}
-                            selectedCode={this.state.selectedCode}
                             schema={this.state.schema} />
               : <div>Укажите условия поиска</div>
           }

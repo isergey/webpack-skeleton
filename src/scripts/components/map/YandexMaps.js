@@ -6,6 +6,21 @@ var settings = {
 };
 
 
+var getDefaultIcon = () => {
+  return window.DG.icon({
+    iconUrl: 'http://maps.api.2gis.ru/2.0/img/DGCustomization__marker.png',
+    iconSize: [26, 26]
+  });
+};
+
+var getHintIcon = () => {
+  return window.DG.icon({
+    iconUrl: 'http://maps.api.2gis.ru/2.0/img/DGCustomization__markerHover.png',
+    iconSize: [26, 26]
+  });
+};
+
+
 var ResultRow = React.createClass({
   getDefaultProps() {
     return {
@@ -68,6 +83,9 @@ export default React.createClass({
     var selfNode = React.findDOMNode(this);
     this.map = null;
     this.markers = null;
+    this.markersIndex = {};
+    this.previouseHintCode = null;
+
     window.DG.then(() => {
       this.map = window.DG.map(selfNode, {
         center: [59.936081, 30.317960],
@@ -84,20 +102,36 @@ export default React.createClass({
       onBaloonClick: () => {}
     };
   },
+  hintBaloon(code) {
+    if (this.previouseHintCode) {
+      let previouseMarker = this.markersIndex[this.previouseHintCode];
+      if (previouseMarker !== undefined) {
+        previouseMarker.setIcon(getDefaultIcon());
+      }
+    }
+
+    let marker = this.markersIndex[code];
+    if (marker !== undefined) {
+      marker.setIcon(getHintIcon());
+    }
+    this.previouseHintCode = code;
+  },
   drowBaloons(objects) {
+    this.markersIndex = {};
     //markers = DG.featureGroup(),
     this.markers.removeFrom(this.map);
     this.markers = window.DG.featureGroup();
     var objectsCoordinates = [];
     objects.forEach((item) => {
       objectsCoordinates.push([item.longitude, item.latitude]);
-      //let shortInfo = item.shortInfo.map((shortInfoItem) => { return shortInfoItem.value; }).join(', ');
 
-      window.DG.marker([item.longitude, item.latitude]).addTo(this.markers).bindPopup(React.renderToStaticMarkup(<ResultRow settings={settings} data={item} />)).on('click', () => {
+      var marker = window.DG.marker([item.longitude, item.latitude]).addTo(this.markers).bindPopup(React.renderToStaticMarkup(<ResultRow settings={settings} data={item} />)).on('click', () => {
         this.props.onBaloonClick(item.code);
       }).on('popupclose', () => {
         this.props.onBaloonClick('');
       });
+      marker.setIcon(getDefaultIcon());
+      this.markersIndex[item.code] = marker;
     });
     if (objectsCoordinates.length) {
       this.markers.addTo(this.map);
