@@ -91,16 +91,18 @@ class Api {
       console.log('load from cache');
       return defer;
     }
+    setTimeout(() => {
+      $.get(`${this.addr}/detail`, {
+        code: code
+      }).done((data) => {
+        DETAIL_CACHE[code] = data;
+        defer.resolve(data);
+      }).error((error) => {
+        console.error('error while detail loading', error);
+        defer.reject(error);
+      });
+    }, 1000);
 
-    $.get(`${this.addr}/detail`, {
-      code: code
-    }).done((data) => {
-      DETAIL_CACHE[code] = data;
-      defer.resolve(data);
-    }).error((error) => {
-      console.error('error while detail loading', error);
-      defer.reject(error);
-    });
     return defer;
   }
 }

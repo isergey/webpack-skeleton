@@ -7,7 +7,9 @@ import {VALUE_TYPES} from '../../schema/characteristics';
 export const Detail = React.createClass({
   getDefaultProps() {
     return {
-      detailObject: {}
+      detailObject: {},
+      onCloseClick: () => {
+      }
     };
   },
   getInitialState() {
@@ -29,17 +31,11 @@ export const Detail = React.createClass({
       });
     });
   },
-  render() {
-    if (this.state.error) {
-      return (
-        <div>{this.state.error}</div>
-      );
-    }
-    if (!this.state.loaded) {
-      return (
-        <div>Загрузка информации об объекте...</div>
-      );
-    }
+  handleCloseClick(event) {
+    event.stopPropagation();
+    this.props.onCloseClick();
+  },
+  renderDetail() {
     var characteristics = this.props.schema.getCharacteristics();
     var references = this.props.schema.getReferences();
     var units = this.props.schema.getUnits();
@@ -82,12 +78,33 @@ export const Detail = React.createClass({
         </tr>
       );
     });
+    return (<table width='100%'>
+      {attrsRows}
+    </table>);
+  },
+  render() {
+    if (this.state.error) {
+      return (
+        <div>{this.state.error}</div>
+      );
+    }
+
+
+    var body = null;
+    if (!this.state.loaded) {
+      body = (
+        <div>Загрузка информации об объекте... <i className="object-detail__loader fa fa-cog fa-spin"></i></div>
+      );
+    } else {
+      body = this.renderDetail();
+    }
     return (
-      <div style={{clear: 'both'}}>
+      <div className="object-detail">
+        <div className="object-detail__top-toolbar">
+          <span className="object-detail__close_btn" onClick={this.handleCloseClick}>X</span>
+        </div>
         <hr/>
-        <table width='100%'>
-          {attrsRows}
-        </table>
+        {body}
       </div>
     );
   }
@@ -135,12 +152,23 @@ var ResultRow = React.createClass({
     }
   },
   onClickHandle() {
+    console.log('on click');
+    if (this.state.showDetail !== true) {
+      this.setState({
+        showDetail: true
+      });
+    }
+
     if (this.props.selectedCode === this.props.data.code) {
       return;
     }
     this.props.onClick(this.props.data);
+
+  },
+  handleDetailCloseClick() {
+    console.log('close click');
     this.setState({
-      showDetail: true
+      showDetail: false
     });
   },
   render() {
@@ -179,7 +207,8 @@ var ResultRow = React.createClass({
           </div>
         </div>
         { this.props.selectedCode === this.props.data.code && this.state.showDetail ?
-          <Detail itemData={this.props.data} schema={this.props.schema}/> : null}
+          <Detail onCloseClick={this.handleDetailCloseClick} itemData={this.props.data}
+                  schema={this.props.schema}/> : null}
       </div>
     );
   }
