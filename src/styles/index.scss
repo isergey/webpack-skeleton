@@ -2,10 +2,20 @@
 @import "clearfix";
 @import "objects-search";
 @import "filter";
-@import "yandex-maps";
+
+//@import "yandex-maps";
+//@import "base";
+
+@import "layout";
+@import "index-layout";
+@import "map";
+@import "object-detail";
+@import "range-input";
+
+
 
 // remove 2gis logo
-.leaflet-bottom.leaflet-right {
-	display: none;
-}
+//.leaflet-bottom.leaflet-right {
+//	display: none;
+//}
 

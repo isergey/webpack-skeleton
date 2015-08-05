@@ -31,6 +31,7 @@ var checkForShow = (field, filterValues) => {
 
 
 var Group = React.createClass({
+  mixins: [React.addons.PureRenderMixin],
   getDefaultProps() {
     return {
       title: '',

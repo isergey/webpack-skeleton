@@ -2,6 +2,7 @@ import React from 'react';
 import Checkbox from './Checkbox';
 
 export default React.createClass({
+  mixins: [React.addons.PureRenderMixin],
   getDefaultProps() {
     return {
       name: '',

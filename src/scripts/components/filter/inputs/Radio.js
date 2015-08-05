@@ -2,6 +2,7 @@ import React from 'react';
 
 
 export default React.createClass({
+  mixins: [React.addons.PureRenderMixin],
   getDefaultProps() {
     return {
       label: '',

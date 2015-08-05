@@ -6,6 +6,7 @@ import Text from './inputs/Text';
 
 
 export default React.createClass({
+  //mixins: [React.addons.PureRenderMixin],
   propTypes: {
     name: React.PropTypes.string,
     title: React.PropTypes.string,

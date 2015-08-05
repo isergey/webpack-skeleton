@@ -39,32 +39,31 @@ export const Detail = React.createClass({
     var characteristics = this.props.schema.getCharacteristics();
     var references = this.props.schema.getReferences();
     var units = this.props.schema.getUnits();
-    var attrsRows = ((this.state.detailObject.object || {}).charactiristicValues || []).map((charactiristicValue, i) => {
-      var characteristicSchema = characteristics.getCharacteristicById(charactiristicValue.id);
-
+    var attrsRows = ((this.state.detailObject.object || {}).charactiristicValues || []).map((characValue, i) => {
+      let characteristicSchema = characteristics.getCharacteristicById(characValue.id);
       let characteristicValue = '';
 
-      if (Array.isArray(charactiristicValue.values) && charactiristicValue.values.length) {
-        characteristicValue = charactiristicValue.values.map((valueItem) => {
-          if (characteristicSchema.reference) {
+      if (Array.isArray(characValue.values) && characValue.values.length) {
+        characteristicValue = characValue.values.map((valueItem) => {
+          if (characteristicSchema && characteristicSchema.reference) {
             let referenceItem = references.getItem(characteristicSchema.reference, valueItem.value);
             if (referenceItem) {
               return referenceItem.value;
             }
           }
-          if (characteristicSchema.type === VALUE_TYPES.date) {
+          if (characteristicSchema && characteristicSchema.type === VALUE_TYPES.date) {
             return moment(valueItem.value, 'DD.MM.YYYY').locale('ru').format('ll');
           }
           return valueItem.value;
         }).join(', ');
-      } else if (Array.isArray(charactiristicValue.ranges) && charactiristicValue.ranges.length) {
-        characteristicValue = charactiristicValue.ranges.map((rangeItem) => {
+      } else if (Array.isArray(characValue.ranges) && characValue.ranges.length) {
+        characteristicValue = characValue.ranges.map((rangeItem) => {
           return `${rangeItem.from} — ${rangeItem.to}`;
         }).join(', ');
       }
 
       let unitName = '';
-      if (characteristicSchema.unitId) {
+      if (characteristicSchema && characteristicSchema.unitId) {
         let unitItem = units.getItemById(characteristicSchema.unitId);
         if (unitItem !== null) {
           unitName = unitItem.fullName;
@@ -73,14 +72,18 @@ export const Detail = React.createClass({
 
       return (
         <tr key={i}>
-          <td>{characteristics.getCharacteristicById(charactiristicValue.id).title}</td>
+          <td>{(characteristics.getCharacteristicById(characValue.id) || {title: characValue.id}).title}</td>
           <td>{characteristicValue} {unitName}</td>
         </tr>
       );
     });
-    return (<table width='100%'>
-      {attrsRows}
-    </table>);
+    return (
+      <table width='100%'>
+        <tbody>
+        {attrsRows}
+        </tbody>
+      </table>
+    );
   },
   render() {
     if (this.state.error) {
@@ -152,7 +155,6 @@ var ResultRow = React.createClass({
     }
   },
   onClickHandle() {
-    console.log('on click');
     if (this.state.showDetail !== true) {
       this.setState({
         showDetail: true
@@ -166,10 +168,17 @@ var ResultRow = React.createClass({
 
   },
   handleDetailCloseClick() {
-    console.log('close click');
     this.setState({
       showDetail: false
     });
+  },
+  renderDetail() {
+    if (this.props.selectedCode === this.props.data.code && this.state.showDetail) {
+      return <Detail onCloseClick={this.handleDetailCloseClick}
+                     itemData={this.props.data}
+                      schema={this.props.schema}/>;
+    }
+    return null;
   },
   render() {
     var shortInfo = this.props.data.shortInfo.map((item, i) => {
@@ -206,9 +215,6 @@ var ResultRow = React.createClass({
             <div>Статус: {this.props.data.status} {this.props.data.variant}</div>
           </div>
         </div>
-        { this.props.selectedCode === this.props.data.code && this.state.showDetail ?
-          <Detail onCloseClick={this.handleDetailCloseClick} itemData={this.props.data}
-                  schema={this.props.schema}/> : null}
       </div>
     );
   }
@@ -239,8 +245,6 @@ export const SearchResult = React.createClass({
     this.setState({
       selectedCode: item.code
     });
-    console.log('item item', item);
-    console.log(this.refs);
   },
   render() {
     var results = this.props.objects.map((item, i) => {

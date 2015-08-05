@@ -10,14 +10,14 @@ class Api {
     this.addr = params.addr;
   }
 
-  schema() {
-    var defer = $.Deferred();
-    $.get(`${this.addr}/schema`).done((data) => {
-      defer.resolve(data);
-    }).error((error) => {
-      defer.reject(error);
+  loadSchema() {
+    return new Promise((resolve, reject) => {
+      $.get(`${this.addr}/schema`).done((data) => {
+        resolve(data);
+      }).error((error) => {
+        reject(error);
+      });
     });
-    return defer;
   }
 
   /**
@@ -49,33 +49,32 @@ class Api {
    * @returns {*}
    */
   search(criteria = [], offset = 0, limit = 10, variant = '', status = '', city = '', prelimiary = true) {
-    var defer = $.Deferred();
-    var requestData = JSON.stringify({
-      listCriteria: {
-        criteria: criteria
-      },
-      offset: offset,
-      limit: limit,
-      variant: variant,
-      status: status,
-      city: city,
-      prelimiary: prelimiary
+    return new Promise((resolve, reject) => {
+      let requestData = JSON.stringify({
+        listCriteria: {
+          criteria: criteria
+        },
+        offset: offset,
+        limit: limit,
+        variant: variant,
+        status: status,
+        city: city,
+        prelimiary: prelimiary
+      });
+      $.ajax({
+        url: `${this.addr}/search`,
+        method: 'post',
+        contentType: 'application/json',
+        dataType: 'json',
+        crossDomain: true,
+        data: requestData
+      }).done(function (data) {
+        resolve(data);
+      }).error(function (error) {
+        console.error('Error while search', error);
+        reject(error);
+      });
     });
-    console.log(requestData);
-    $.ajax({
-      url: `${this.addr}/search`,
-      method: 'post',
-      contentType: 'application/json',
-      dataType: 'json',
-      crossDomain: true,
-      data: requestData
-    }).done(function (data) {
-      defer.resolve(data);
-    }).error(function (error) {
-      console.error(error);
-      defer.reject(error);
-    });
-    return defer;
   }
 
   /**
@@ -101,16 +100,17 @@ class Api {
         console.error('error while detail loading', error);
         defer.reject(error);
       });
-    }, 1000);
+    }, 200);
 
     return defer;
   }
 }
 
-
-export const api = new Api({
+const api = new Api({
   addr: settings.apiHost
 });
+
+export default api;
 
 
 

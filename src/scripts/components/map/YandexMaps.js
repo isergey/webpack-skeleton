@@ -1,10 +1,6 @@
 /* eslint new-cap:1 */
 import React from 'react';
-
-var settings = {
-  staticHost: 'ftp://95.55.146.178'
-};
-
+import settings from '../../settings';
 
 var getDefaultIcon = () => {
   return window.DG.icon({
@@ -147,7 +143,7 @@ export default React.createClass({
   },
   render() {
     return (
-      <div className="yandex-maps" onClick={this.handleClick}>
+      <div className="map" onClick={this.handleClick}>
         Map
       </div>
     );
